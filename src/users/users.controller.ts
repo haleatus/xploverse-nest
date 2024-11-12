@@ -1,14 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UsePipes,
-} from '@nestjs/common';
-import { ZodValidationPipe } from './pipes/zodValidationPipe';
-import { createUserSchema, CreateUserZodDto } from './dto/createUserZod.dto';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { CreateUserDto } from './dto/createUser.dto';
 
 @Controller('users')
 export class UsersController {
@@ -23,19 +14,17 @@ export class UsersController {
   }
 
   @Post(':register')
-  @UsePipes(new ZodValidationPipe(createUserSchema))
   create(
     @Body()
-    body: CreateUserZodDto,
+    body: CreateUserDto,
   ) {
     return body;
   }
 
   @Patch(':update')
-  @UsePipes(new ZodValidationPipe(createUserSchema))
   update(
     @Body()
-    body: CreateUserZodDto,
+    body: CreateUserDto,
   ) {
     return body;
   }
