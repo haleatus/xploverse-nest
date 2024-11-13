@@ -10,6 +10,7 @@ import {
 import { CreateUserDto } from 'src/core/dtos/request/users/createUser.dto';
 import { UsersService } from './users.service';
 import { ParseIdPipe } from 'src/core/pipes/parseIdpipe';
+import { UpdateUserDto } from 'src/core/dtos/request/users/updateUser.dto';
 
 @Controller('users')
 export class UsersController {
@@ -37,7 +38,7 @@ export class UsersController {
   update(
     @Param('id', ParseIdPipe) id,
     @Body()
-    body: CreateUserDto,
+    body: UpdateUserDto,
   ) {
     return this.usersService.update(id, body);
   }
