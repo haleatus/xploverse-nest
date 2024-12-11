@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppDataSourceModule } from './data-services/mgdb/mgdb-datasource.module';
 import { XplorerModule } from './application/features/users/xplorer/xplorer.module';
 import { CryptoModule } from './libs/crypto/crypto.module';
+import { TokenModule } from './libs/token/token.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CryptoModule } from './libs/crypto/crypto.module';
     AppDataSourceModule,
     XplorerModule,
     CryptoModule,
+    TokenModule,
   ],
   controllers: [AppController],
   providers: [AppService],
