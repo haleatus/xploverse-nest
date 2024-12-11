@@ -17,9 +17,6 @@ export class XplorerEntity extends BaseEntity {
   fullname: string;
 
   @OneToOne(() => FileEntity, { cascade: true, eager: true })
-  @JoinColumn({
-    name: 'id',
-  })
   profile_picture: FileEntity;
 
   @Column({
@@ -40,10 +37,10 @@ export class XplorerEntity extends BaseEntity {
   password: string;
 
   @Column({
-    name: 'contact',
+    name: 'phone_number',
     unique: true,
   })
-  contact: string;
+  phone_number: string;
 
   toJSON() {
     return {

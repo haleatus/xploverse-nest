@@ -1,13 +1,14 @@
 import {
   CreateDateColumn,
   DeleteDateColumn,
-  PrimaryGeneratedColumn,
+  ObjectId,
+  ObjectIdColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 export class BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @ObjectIdColumn()
+  _id: ObjectId;
 
   @CreateDateColumn({
     type: 'timestamptz',
