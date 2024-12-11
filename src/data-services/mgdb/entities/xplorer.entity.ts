@@ -4,7 +4,7 @@ import { FileEntity } from './file.entity';
 import { UserTypeEnum } from 'src/common/enums/users/user-type.enum';
 
 @Entity('users')
-export class UsersEntity extends BaseEntity {
+export class XplorerEntity extends BaseEntity {
   @Column({
     name: 'username',
     unique: true,
@@ -23,6 +23,7 @@ export class UsersEntity extends BaseEntity {
   profile_picture: FileEntity;
 
   @Column({
+    default: UserTypeEnum.XPLORER,
     name: 'user_type',
   })
   user_type: UserTypeEnum;
