@@ -16,7 +16,7 @@ import { XplorerService } from './xplorer.service';
 export class XplorerController {
   constructor(private xplorerService: XplorerService) {}
 
-  @Post('/create')
+  @Post('/signup')
   async SignUp(@Body() dto: XplorerSignUpDto) {
     return await this.xplorerService.create(dto);
   }

@@ -20,4 +20,14 @@ export class XplorerService {
     );
     return await this.xplorerRepository.save(newXplorer);
   }
+
+  async findXplorerByUsername(username: string) {
+    const xplorer = await this.xplorerRepository.findOneBy({
+      username: username,
+    });
+    if (!xplorer) {
+      throw new NotFoundException('xplorer does not exist');
+    }
+    return xplorer;
+  }
 }
