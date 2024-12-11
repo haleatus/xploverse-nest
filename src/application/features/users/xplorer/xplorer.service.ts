@@ -21,6 +21,11 @@ export class XplorerService {
     return await this.xplorerRepository.save(newXplorer);
   }
 
+  async findall() {
+    const xplorers = await this.xplorerRepository.find();
+    return xplorers;
+  }
+
   async findXplorerByUsername(username: string) {
     const xplorer = await this.xplorerRepository.findOneBy({
       username: username,
