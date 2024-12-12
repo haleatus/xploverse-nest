@@ -8,12 +8,21 @@ import {
   Patch,
   Query,
   Param,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { XplorerService } from './xplorer.service';
+import { AuthGuard } from 'src/application/guards/auth.guard';
 
+UseGuards(AuthGuard);
 @Controller('xplorer')
 export class XplorerController {
   constructor(private xplorerService: XplorerService) {}
+
+  @Get('/test')
+  async test(@Req() req) {
+    return { user: req.user };
+  }
 
   @Get('/get-all')
   async getAll() {

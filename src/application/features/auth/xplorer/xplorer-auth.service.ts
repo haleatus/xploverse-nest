@@ -44,7 +44,7 @@ export class XplorerAuthService {
       throw new UnauthorizedException('incorrect usernme or password');
     }
 
-    const payload = { sub: xplorer.username };
+    const payload = { _id: xplorer._id };
     const accessToken = await this.jwtTokenService.createToken(payload);
 
     return {
