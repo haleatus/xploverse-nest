@@ -10,6 +10,7 @@ import { XplorerEntity } from 'src/data-services/mgdb/entities/xplorer.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
+import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
 
 @Injectable()
 export class XplorerAuthService {
@@ -18,6 +19,7 @@ export class XplorerAuthService {
     private xplorerRepository: Repository<XplorerEntity>,
     private xplorerService: XplorerService,
     private bcryptService: BcryptService,
+    private jwtTokenService: JwtTokenService,
   ) {}
 
   async signup(createXplorerDto: XplorerSignUpDto): Promise<XplorerEntity> {
@@ -33,21 +35,20 @@ export class XplorerAuthService {
       dto.username,
     );
 
-    if (!xplorer) {
-      throw new NotFoundException('username not found');
-    }
-
     const isPasswordMatched = await this.bcryptService.compare(
       dto.password,
       xplorer.password,
     );
 
-    if (!isPasswordMatched) {
-      throw new UnauthorizedException('password does not match');
+    if (!xplorer || !isPasswordMatched) {
+      throw new UnauthorizedException('incorrect usernme or password');
     }
 
+    const payload = { sub: xplorer.username };
+    const accessToken = await this.jwtTokenService.createToken(payload);
+
     return {
-      msg: 'you can be authorized',
+      accessToken,
     };
   }
 }
