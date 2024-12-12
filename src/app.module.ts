@@ -6,8 +6,6 @@ import { AppDataSourceModule } from './data-services/mgdb/mgdb-datasource.module
 import { XplorerModule } from './application/features/users/xplorer/xplorer.module';
 import { CryptoModule } from './libs/crypto/crypto.module';
 import { TokenModule } from './libs/token/token.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './application/guards/auth.guard';
 import { XplorerAuthModule } from './application/features/auth/xplorer/xplorer-auth.module';
 
 @Module({
@@ -20,12 +18,6 @@ import { XplorerAuthModule } from './application/features/auth/xplorer/xplorer-a
     XplorerAuthModule,
   ],
   controllers: [AppController],
-  providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
-    AppService,
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

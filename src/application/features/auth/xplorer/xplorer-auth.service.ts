@@ -1,25 +1,53 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { XplorerService } from '../../users/xplorer/xplorer.service';
-import { JwtService } from '@nestjs/jwt';
 import { XplorerSignInDto } from 'src/core/dtos/request/signin.dto';
+import { XplorerSignUpDto } from 'src/core/dtos/request/signup.dto';
+import { XplorerEntity } from 'src/data-services/mgdb/entities/xplorer.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 
 @Injectable()
 export class XplorerAuthService {
   constructor(
+    @InjectRepository(XplorerEntity)
+    private xplorerRepository: Repository<XplorerEntity>,
     private xplorerService: XplorerService,
-    private jwtService: JwtService,
+    private bcryptService: BcryptService,
   ) {}
+
+  async signup(createXplorerDto: XplorerSignUpDto): Promise<XplorerEntity> {
+    const newXplorer = this.xplorerRepository.create(createXplorerDto);
+    newXplorer.password = await this.bcryptService.hash(
+      createXplorerDto.password,
+    );
+    return await this.xplorerRepository.save(newXplorer);
+  }
 
   async signIn(dto: XplorerSignInDto) {
     const xplorer = await this.xplorerService.findXplorerByUsername(
       dto.username,
     );
-    if (xplorer?.password !== dto.password) {
-      throw new UnauthorizedException();
+
+    if (!xplorer) {
+      throw new NotFoundException('username not found');
     }
-    const payload = { sub: xplorer._id, username: xplorer.username };
+
+    const isPasswordMatched = await this.bcryptService.compare(
+      dto.password,
+      xplorer.password,
+    );
+
+    if (!isPasswordMatched) {
+      throw new UnauthorizedException('password does not match');
+    }
+
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      msg: 'you can be authorized',
     };
   }
 }
