@@ -49,6 +49,7 @@ export class XplorerAuthService {
 
     return {
       accessToken,
+      xplorer,
     };
   }
 }
