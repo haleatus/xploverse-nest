@@ -15,10 +15,10 @@ import { XplorerService } from './xplorer.service';
 import { AuthGuard } from 'src/application/guards/auth/auth.guard';
 
 @Controller('xplorer')
-@UseGuards(AuthGuard)
 export class XplorerController {
   constructor(private xplorerService: XplorerService) {}
 
+  @UseGuards(AuthGuard)
   @Get('/test')
   async test(@Req() req) {
     return { user: req.userId };
