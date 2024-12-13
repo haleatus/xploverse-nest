@@ -3,7 +3,7 @@ import { XplorerService } from './xplorer.service';
 import { XplorerController } from './xplorer.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { XplorerEntity } from 'src/data-services/mgdb/entities/xplorer.entity';
-import { AuthGuardModule } from 'src/application/guards/auth/auth-guard.module';
+import { AuthGuardModule } from 'src/application/guards/auth/auth.module';
 import { TokenModule } from 'src/libs/token/token.module';
 
 @Module({
