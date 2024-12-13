@@ -12,16 +12,16 @@ import {
   Req,
 } from '@nestjs/common';
 import { XplorerService } from './xplorer.service';
-import { AuthGuard } from 'src/application/guards/auth.guard';
+import { AuthGuard } from 'src/application/guards/auth/auth.guard';
 
-UseGuards(AuthGuard);
 @Controller('xplorer')
+@UseGuards(AuthGuard)
 export class XplorerController {
   constructor(private xplorerService: XplorerService) {}
 
   @Get('/test')
   async test(@Req() req) {
-    return { user: req.user };
+    return { user: req.userId };
   }
 
   @Get('/get-all')
