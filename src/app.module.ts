@@ -7,8 +7,6 @@ import { XplorerModule } from './application/features/users/xplorer/xplorer.modu
 import { CryptoModule } from './libs/crypto/crypto.module';
 import { TokenModule } from './libs/token/token.module';
 import { XplorerAuthModule } from './application/features/auth/xplorer/xplorer-auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './application/guards/auth/auth.guard';
 
 @Module({
   imports: [
@@ -20,12 +18,6 @@ import { AuthGuard } from './application/guards/auth/auth.guard';
     XplorerAuthModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

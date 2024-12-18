@@ -1,46 +1,32 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { FileEntity } from './file.entity';
 import { UserTypeEnum } from 'src/common/enums/users/user-type.enum';
 
 @Entity('users')
 export class XplorerEntity extends BaseEntity {
-  @Column({
-    name: 'username',
-    unique: true,
-  })
+  @Column({ name: 'username', unique: true })
   username: string;
 
-  @Column({
-    name: 'fullname',
-  })
+  @Column({ name: 'fullname' })
   fullname: string;
 
-  @OneToOne(() => FileEntity, { cascade: true, eager: true })
-  profile_picture: FileEntity;
-
-  @Column({
-    default: UserTypeEnum.XPLORER,
-    name: 'user_type',
-  })
+  @Column({ name: 'user_type', default: UserTypeEnum.XPLORER })
   user_type: UserTypeEnum;
 
-  @Column({
-    name: 'email',
-    unique: true,
-  })
+  @Column({ name: 'email', unique: true })
   email: string;
 
-  @Column({
-    name: 'password',
-  })
+  @Column({ name: 'password' })
   password: string;
 
-  @Column({
-    name: 'phone_number',
-    unique: true,
-  })
+  @Column({ name: 'phone_number', unique: true })
   phone_number: string;
+
+  constructor(partial?: Partial<XplorerEntity>) {
+    super();
+    this.user_type = UserTypeEnum.XPLORER; // Explicitly set the default
+    Object.assign(this, partial); // For optional parameter initialization
+  }
 
   toJSON() {
     return {

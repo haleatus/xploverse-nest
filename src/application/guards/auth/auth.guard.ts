@@ -7,10 +7,15 @@ import {
 } from '@nestjs/common';
 import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
 import { Request } from 'express';
+import { XplorerService } from 'src/application/features/users/xplorer/xplorer.service';
+import { converToObjectId } from 'src/common/utils/create-object-id';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtTokenService: JwtTokenService) {}
+  constructor(
+    private jwtTokenService: JwtTokenService,
+    private xplorerService: XplorerService,
+  ) {}
 
   private extractToken(request: Request): string | undefined {
     return request.headers.authorization?.split(' ')[1];
@@ -26,7 +31,13 @@ export class AuthGuard implements CanActivate {
 
     try {
       const decoded = await this.jwtTokenService.checkToken(token);
-      request.userId = decoded._id;
+
+      if (decoded.user_type === 'XPLORER') {
+        const user = await this.xplorerService.findXolorerById(
+          converToObjectId(decoded._id),
+        );
+        request.user = user;
+      }
     } catch (error) {
       Logger.error(error.message);
       throw new UnauthorizedException('Invalid Token');
