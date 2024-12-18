@@ -10,7 +10,7 @@ import {
   Param,
 } from '@nestjs/common';
 
-import { XplorerSignInDto } from 'src/core/dtos/request/signin.dto';
+import { SignInDto } from 'src/core/dtos/request/signin.dto';
 import { XplorerSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { XplorerAuthService } from './xplorer-auth.service';
 
@@ -19,7 +19,7 @@ export class XplorerAuthController {
   constructor(private xplorerAuthService: XplorerAuthService) {}
 
   @Post('/signin')
-  async signin(@Body() dto: XplorerSignInDto) {
+  async signin(@Body() dto: SignInDto) {
     return await this.xplorerAuthService.signIn(dto);
   }
 

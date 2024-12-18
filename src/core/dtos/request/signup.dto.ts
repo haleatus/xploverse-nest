@@ -14,3 +14,5 @@ export class XplorerSignUpDto {
   @IsNotEmpty()
   password: string;
 }
+
+export class TripPlannerSignUpDto {}

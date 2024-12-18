@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { XplorerService } from '../../users/xplorer/xplorer.service';
-import { XplorerSignInDto } from 'src/core/dtos/request/signin.dto';
+import { SignInDto } from 'src/core/dtos/request/signin.dto';
 import { XplorerSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { XplorerEntity } from 'src/data-services/mgdb/entities/xplorer.entity';
 import { Repository } from 'typeorm';
@@ -30,7 +30,7 @@ export class XplorerAuthService {
     return await this.xplorerRepository.save(newXplorer);
   }
 
-  async signIn(dto: XplorerSignInDto) {
+  async signIn(dto: SignInDto) {
     const xplorer = await this.xplorerService.findXplorerByUsername(
       dto.username,
     );
