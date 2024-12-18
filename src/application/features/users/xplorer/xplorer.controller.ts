@@ -21,7 +21,7 @@ export class XplorerController {
   @UseGuards(AuthGuard)
   @Get('/test')
   async test(@Req() req) {
-    return { user: req.user };
+    return req.user;
   }
 
   @Get('/get-all')
