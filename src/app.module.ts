@@ -7,6 +7,7 @@ import { XplorerModule } from './application/features/users/xplorer/xplorer.modu
 import { CryptoModule } from './libs/crypto/crypto.module';
 import { TokenModule } from './libs/token/token.module';
 import { XplorerAuthModule } from './application/features/auth/xplorer/xplorer-auth.module';
+import { TripPlannerModule } from './application/features/users/trip-planner/trip-planner.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { XplorerAuthModule } from './application/features/auth/xplorer/xplorer-a
     CryptoModule,
     TokenModule,
     XplorerAuthModule,
+    TripPlannerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
