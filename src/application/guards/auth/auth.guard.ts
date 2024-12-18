@@ -8,7 +8,7 @@ import {
 import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
 import { Request } from 'express';
 import { XplorerService } from 'src/application/features/users/xplorer/xplorer.service';
-import { converToObjectId } from 'src/common/utils/create-object-id';
+import { converToObjectId } from 'src/common/utils/convert-to-object-id';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
