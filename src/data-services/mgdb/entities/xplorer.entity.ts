@@ -2,7 +2,7 @@ import { Column, Entity } from 'typeorm';
 import { UserTypeEnum } from 'src/common/enums/users/user-type.enum';
 import { BaseUserEntity } from './base.entity';
 
-@Entity('users')
+@Entity('xplorers')
 export class XplorerEntity extends BaseUserEntity {
   @Column({ name: 'user_type', default: UserTypeEnum.XPLORER })
   user_type: UserTypeEnum;
