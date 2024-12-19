@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
 
-export const converToObjectId = (stringId: string) => {
+export const convertToObjectId = (stringId: string) => {
   return ObjectId.createFromHexString(stringId);
 };

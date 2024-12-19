@@ -8,7 +8,7 @@ import {
 import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
 import { Request } from 'express';
 import { XplorerService } from 'src/application/features/users/xplorer/xplorer.service';
-import { converToObjectId } from 'src/common/utils/convert-to-object-id';
+import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
 import { UserTypeEnum } from 'src/common/enums/users/user-type.enum';
 
 @Injectable()
@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
 
       if (decoded.user_type === UserTypeEnum.XPLORER) {
         const user = await this.xplorerService.findXolorerById(
-          converToObjectId(decoded._id),
+          convertToObjectId(decoded._id),
         );
         request.user = user;
       }
