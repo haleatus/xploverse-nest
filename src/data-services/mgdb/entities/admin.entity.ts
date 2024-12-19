@@ -4,6 +4,8 @@ import { BaseUserEntity } from './base.entity';
 
 @Entity('admins')
 export class AdminEntity extends BaseUserEntity {
+  // TODO :: nullable false garnu parxa
+
   @Column({ name: 'user_type', default: UserTypeEnum.XPLORER })
   user_type: UserTypeEnum;
 
