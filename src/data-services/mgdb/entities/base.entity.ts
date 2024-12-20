@@ -5,9 +5,7 @@ import {
   ObjectIdColumn,
   UpdateDateColumn,
   Column,
-  OneToOne,
 } from 'typeorm';
-import { FileEntity } from './file.entity';
 
 export class BaseEntity {
   @ObjectIdColumn()
@@ -81,9 +79,6 @@ export class BaseUserEntity extends BaseEntity {
 
   @Column({ name: 'password' })
   password: string;
-
-  @OneToOne(() => FileEntity, { cascade: true, eager: true })
-  profile_picture: FileEntity;
 
   toJSON() {
     return {
