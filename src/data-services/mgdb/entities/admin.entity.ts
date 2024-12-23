@@ -1,5 +1,4 @@
 import { Column, Entity } from 'typeorm';
-import { UserTypeEnum } from 'src/common/enums/users/user-type.enum';
 import { BaseUserEntity } from './base.entity';
 
 // TODO :: nullable false garnu parxa

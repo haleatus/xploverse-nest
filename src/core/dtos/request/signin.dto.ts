@@ -1,5 +1,4 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { UserTypeEnum } from 'src/common/enums/users/user-type.enum';
 
 export class SignInDto {
   @IsNotEmpty()
@@ -7,7 +6,4 @@ export class SignInDto {
 
   @IsNotEmpty()
   password: string;
-
-  @IsOptional()
-  userType: UserTypeEnum;
 }
