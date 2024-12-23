@@ -8,12 +8,14 @@ import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 import { UserSignUpDto } from 'src/core/dtos/request/signup.dto';
+import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    private bcryptService: BcryptService,
   ) {}
 
   async UserSignUp(dto: UserSignUpDto) {
@@ -25,7 +27,10 @@ export class UserService {
       throw new ConflictException('user already exists.');
     }
 
-    return this.userRepository.create(dto);
+    const newUser = this.userRepository.create(dto);
+    newUser.password = await this.bcryptService.hash(dto.password);
+
+    return await this.userRepository.save(newUser);
   }
 
   async findAllUser() {

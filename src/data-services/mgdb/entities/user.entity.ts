@@ -7,6 +7,6 @@ export class UserEntity extends BaseUserEntity {
   @OneToOne(() => FileEntity, { cascade: true, eager: true })
   profile_picture: FileEntity;
 
-  @Column({ name: 'phone_number', unique: true })
+  @Column({ name: 'phone_number', unique: true, nullable: false })
   phone_number: string;
 }

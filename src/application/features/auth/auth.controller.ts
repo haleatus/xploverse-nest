@@ -7,12 +7,12 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('/admin')
+  @Post('/admin/signin')
   async adminSignIn(@Body() dto: SignInDto) {
     return this.authService.adminSignIn(dto);
   }
 
-  @Post('/user')
+  @Post('/user/signin')
   async userSignIn(@Body() dto: SignInDto) {
     return this.authService.userSignIn(dto);
   }
