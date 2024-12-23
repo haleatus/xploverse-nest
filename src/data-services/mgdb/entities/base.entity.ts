@@ -4,6 +4,7 @@ import {
   ObjectId,
   ObjectIdColumn,
   UpdateDateColumn,
+  Column,
 } from 'typeorm';
 
 export class BaseEntity {
@@ -51,5 +52,38 @@ export class BaseEntity {
       .join('_')
       .toUpperCase();
     return `${name}_REPOSITORY`;
+  }
+}
+
+export class RefreshTokenBaseEntity extends BaseEntity {
+  @Column({
+    name: 'token',
+  })
+  token: string;
+
+  @Column({
+    name: 'expiry_data',
+  })
+  expiry_data: Date;
+}
+
+export class BaseUserEntity extends BaseEntity {
+  @Column({ name: 'username', unique: true })
+  username: string;
+
+  @Column({ name: 'fullname' })
+  fullname: string;
+
+  @Column({ name: 'email', unique: true })
+  email: string;
+
+  @Column({ name: 'password' })
+  password: string;
+
+  toJSON() {
+    return {
+      ...this,
+      password: undefined,
+    };
   }
 }

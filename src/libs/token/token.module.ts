@@ -1,12 +1,19 @@
 import { Module } from '@nestjs/common';
 import { JwtTokenService } from './jwt/jwt-token.service';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'default_secret', // Replace with your secret or use environment variable
-      signOptions: { expiresIn: '1h' }, // Configure token expiration if needed
+    JwtModule.registerAsync({
+      imports: [ConfigModule], // Import ConfigModule here
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_EXPIRATION_TIME'),
+        },
+      }),
     }),
   ],
   providers: [JwtTokenService],

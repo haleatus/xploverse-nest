@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from 'jsonwebtoken';
+import { JwtPayloadInterface } from 'src/common/interface/jwt-payload.interface';
 
 @Injectable()
 export class JwtTokenService {
@@ -11,7 +11,7 @@ export class JwtTokenService {
     return decode;
   }
 
-  async createToken(payload: JwtPayload): Promise<string> {
+  async createToken(payload: JwtPayloadInterface): Promise<string> {
     return this.jwtService.signAsync(payload);
   }
 }

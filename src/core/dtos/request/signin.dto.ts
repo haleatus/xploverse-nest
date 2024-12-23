@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class XplorerSignInDto {
+export class SignInDto {
   @IsNotEmpty()
   username: string;
 
