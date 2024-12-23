@@ -3,21 +3,21 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { AppDataSourceModule } from './data-services/mgdb/mgdb-datasource.module';
-import { XplorerModule } from './application/features/users/xplorer/xplorer.module';
 import { CryptoModule } from './libs/crypto/crypto.module';
 import { TokenModule } from './libs/token/token.module';
-import { XplorerAuthModule } from './application/features/auth/xplorer/xplorer-auth.module';
-import { TripPlannerModule } from './application/features/users/trip-planner/trip-planner.module';
+import { AuthModule } from './application/features/auth/auth.module';
+import { AdminModule } from './application/features/admin/admin.module';
+import { UserModule } from './application/features/user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     AppDataSourceModule,
-    XplorerModule,
     CryptoModule,
     TokenModule,
-    XplorerAuthModule,
-    TripPlannerModule,
+    AuthModule,
+    AdminModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

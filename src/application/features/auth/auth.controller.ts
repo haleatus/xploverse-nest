@@ -1,24 +1,19 @@
-import {
-  Controller,
-  Body,
-  Get,
-  Put,
-  Post,
-  Delete,
-  Patch,
-  Query,
-  Param,
-} from '@nestjs/common';
+import { Controller, Body, Post } from '@nestjs/common';
 
 import { SignInDto } from 'src/core/dtos/request/signin.dto';
 import { AuthService } from './auth.service';
 
-@Controller('auth')
+@Controller('/api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('/signin')
-  async signin(@Body() dto: SignInDto) {
-    return await this.authService.signIn(dto);
+  @Post('/admin')
+  async adminSignIn(@Body() dto: SignInDto) {
+    return this.authService.adminSignIn(dto);
   }
+
+  // @Post('/user')
+  // async userSignIn(@Body() dto: SignInDto) {
+  //   return this.authService.userSignIn(dto);
+  // }
 }

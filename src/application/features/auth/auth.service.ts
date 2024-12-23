@@ -4,57 +4,51 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-// xplorer
-import { XplorerService } from '../users/xplorer/xplorer.service';
-import { XplorerEntity } from 'src/data-services/mgdb/entities/xplorer.entity';
-
-// trip-planner
-import { TripPlannerService } from '../users/trip-planner/trip-planner.service';
-import { TripPlannerEntity } from 'src/data-services/mgdb/entities/trip-planner.entity';
-
-import { UserTypeEnum } from 'src/common/enums/users/user-type.enum';
 import { SignInDto } from 'src/core/dtos/request/signin.dto';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
+
+// admin
+import { AdminService } from '../admin/admin.service';
+
+// user
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(XplorerEntity)
-    private xplorerRepository: Repository<XplorerEntity>,
-    private xplorerService: XplorerService,
-    private tripPlannerService: TripPlannerService,
     private bcryptService: BcryptService,
     private jwtTokenService: JwtTokenService,
+    private adminService: AdminService,
+    private userService: UserService,
   ) {}
 
-  async signIn(dto: SignInDto) {
-    let user = null;
+  async adminSignIn(dto: SignInDto) {
+    const admin = await this.adminService.findAdminByUsername(dto.username);
+    if (!admin) throw new NotFoundException('admin does not exist.');
+    return await this.signIn(dto, admin);
+  }
 
-    if (dto.userType === UserTypeEnum.XPLORER)
-      user = await this.xplorerService.findXplorerByUsername(dto.username);
-    else if (dto.userType === UserTypeEnum.TRIP_PLANNER)
-      user = await this.tripPlannerService.findTripPlannerByUsername(
-        dto.username,
-      );
+  async userSignIn(dto: SignInDto) {
+    const user = await this.userService.findAdminByUsername(dto.username);
+    if (!user) throw new NotFoundException('User does not exist');
+    return await this.signIn(dto, user);
+  }
 
+  private async signIn(dto: SignInDto, entity: any) {
     const isPasswordMatched = await this.bcryptService.compare(
       dto.password,
-      user.password,
+      entity.password,
     );
 
-    if (!user || !isPasswordMatched) {
-      throw new UnauthorizedException('incorrect username or password');
-    }
+    if (!isPasswordMatched)
+      throw new UnauthorizedException('password is incorrect.');
 
-    const payload = { _id: user._id, user_type: user.user_type };
+    const payload = { _id: entity._id };
     const accessToken = await this.jwtTokenService.createToken(payload);
-
     return {
       accessToken,
-      user,
+      entity,
     };
   }
 }
