@@ -66,3 +66,24 @@ export class RefreshTokenBaseEntity extends BaseEntity {
   })
   expiry_data: Date;
 }
+
+export class BaseUserEntity extends BaseEntity {
+  @Column({ name: 'username', unique: true })
+  username: string;
+
+  @Column({ name: 'fullname' })
+  fullname: string;
+
+  @Column({ name: 'email', unique: true })
+  email: string;
+
+  @Column({ name: 'password' })
+  password: string;
+
+  toJSON() {
+    return {
+      ...this,
+      password: undefined,
+    };
+  }
+}
