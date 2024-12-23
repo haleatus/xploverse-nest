@@ -31,13 +31,6 @@ export class AuthGuard implements CanActivate {
 
     try {
       const decoded = await this.jwtTokenService.checkToken(token);
-
-      // if (decoded.user_type === UserTypeEnum.XPLORER) {
-      //   const user = await this.xplorerService.findXolorerById(
-      //     convertToObjectId(decoded._id),
-      //   );
-      //   request.user = user;
-      // }
       request.user = convertToObjectId(decoded._id);
     } catch (error) {
       Logger.error(error.message);

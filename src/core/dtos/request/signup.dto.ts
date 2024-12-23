@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class XplorerSignUpDto {
+export class SignUpDto {
   @IsNotEmpty()
   username: string;
 
@@ -9,10 +9,12 @@ export class XplorerSignUpDto {
   email: string;
 
   @IsNotEmpty()
-  phone_number: string;
-
-  @IsNotEmpty()
   password: string;
 }
 
-export class TripPlannerSignUpDto {}
+export class AdminSignUpDto extends SignUpDto {}
+
+export class UserSignUpDto extends SignUpDto {
+  @IsNotEmpty()
+  phone_number: string;
+}
