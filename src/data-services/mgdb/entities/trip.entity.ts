@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
 import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
+import { FileEntity } from './file.entity';
 
 @Entity('trips')
 export class TripEntity extends BaseEntity {
@@ -15,6 +16,9 @@ export class TripEntity extends BaseEntity {
   })
   description: string;
 
+  @OneToOne(() => FileEntity, { cascade: true, eager: true })
+  trip_image: FileEntity;
+
   @ManyToOne(() => UserEntity)
   @JoinColumn({
     name: 'planner_id',
@@ -27,6 +31,16 @@ export class TripEntity extends BaseEntity {
   })
   trip_status: TripStatusEnum.PENDING;
 
+  @Column({
+    name: 'start_date',
+  })
+  start_date: Date;
+
+  @Column({
+    name: 'end_date',
+  })
+  end_date: Date;
+
   @Column('simple-json', { nullable: true })
   start_point: {
     latitude: string;
@@ -35,6 +49,13 @@ export class TripEntity extends BaseEntity {
 
   @Column('simple-json', { nullable: true })
   end_point: {
+    latitude: string;
+    longitude: string;
+  };
+
+  @Column({ type: 'jsonb', nullable: true })
+  stops: {
+    type: string;
     latitude: string;
     longitude: string;
   };
