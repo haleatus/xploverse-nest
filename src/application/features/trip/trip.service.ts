@@ -2,7 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { CreateTripDto } from 'src/core/dtos/request/trip.dto';
+import { TripDto } from 'src/core/dtos/request/trip.dto';
+import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 
 @Injectable()
 export class TripService {
@@ -16,8 +17,11 @@ export class TripService {
     return trips;
   }
 
-  async createTrip(dto: CreateTripDto) {
-    const newTrip = this.tripRepository.create(dto);
+  async createTrip(dto: TripDto): Promise<TripEntity> {
+    const newTrip = this.tripRepository.create({
+      ...dto,
+      trip_status: dto.trip_status ?? TripStatusEnum.PENDING,
+    });
     return await this.tripRepository.save(newTrip);
   }
 }

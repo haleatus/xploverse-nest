@@ -29,14 +29,10 @@ export class TripEntity extends BaseEntity {
     name: 'trip_status',
     type: 'enum',
     enum: TripStatusEnum,
+    default: TripStatusEnum.PENDING,
     nullable: false,
   })
-  trip_status: TripStatusEnum.PENDING;
-
-  @Column({
-    name: 'start_date',
-  })
-  start_date: Date;
+  trip_status: TripStatusEnum;
 
   @Column({
     name: 'end_date',

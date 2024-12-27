@@ -5,14 +5,15 @@ import { UserEntity } from './user.entity';
 import { CarPoolStatusEnum } from 'src/common/enums/trip-status.enum';
 
 @Entity('car_pool_requests')
-export class CarPoolRequestEntity {
+export class CarPoolRequestEntity extends BaseEntity {
   @Column({
     name: 'car_pool_status',
     type: 'enum',
     enum: CarPoolStatusEnum,
+    default: CarPoolStatusEnum.PENDING,
     nullable: false,
   })
-  car_pool_status: CarPoolStatusEnum.PENDING;
+  car_pool_status: CarPoolStatusEnum;
 
   @Column({
     name: 'participants_count',

@@ -12,9 +12,10 @@ export class UserEntity extends BaseUserEntity {
     name: 'is_verified',
     type: 'enum',
     enum: VerifyUserEnum,
+    default: VerifyUserEnum.PENDING,
     nullable: false,
   })
-  is_verified: VerifyUserEnum.PENDING;
+  is_verified: VerifyUserEnum;
 
   @Column({ name: 'phone_number', unique: true, nullable: false })
   phone_number: string;
