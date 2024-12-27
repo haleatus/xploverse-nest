@@ -27,6 +27,8 @@ export class TripEntity extends BaseEntity {
 
   @Column({
     name: 'trip_status',
+    type: 'enum',
+    enum: TripStatusEnum,
     nullable: false,
   })
   trip_status: TripStatusEnum.PENDING;

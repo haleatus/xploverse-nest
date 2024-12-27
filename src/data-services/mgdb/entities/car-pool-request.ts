@@ -8,10 +8,11 @@ import { CarPoolStatusEnum } from 'src/common/enums/trip-status.enum';
 export class CarPoolRequestEntity {
   @Column({
     name: 'car_pool_status',
-    default: CarPoolStatusEnum.PENDING,
+    type: 'enum',
+    enum: CarPoolStatusEnum,
     nullable: false,
   })
-  car_pool_status: CarPoolStatusEnum;
+  car_pool_status: CarPoolStatusEnum.PENDING;
 
   @Column({
     name: 'participants_count',
