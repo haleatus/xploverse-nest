@@ -63,10 +63,10 @@ export class TripEntity extends BaseEntity {
   };
 
   @Column({
-    name: 'trip_status',
+    name: 'is_car_pool',
     default: false,
   })
-  is_car_pool_enabled: boolean;
+  is_car_pool: boolean;
 
   @Column({
     name: 'max_participants',
