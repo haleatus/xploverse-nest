@@ -6,7 +6,7 @@ import { TripDto } from 'src/core/dtos/request/trip.dto';
 import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 
 @Injectable()
-export class TripService {
+export class TripUseCaseService {
   constructor(
     @InjectRepository(TripEntity)
     private tripRepository: Repository<TripEntity>,

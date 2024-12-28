@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppDataSourceModule } from './data-services/mgdb/mgdb-datasource.module';
 import { CryptoModule } from './libs/crypto/crypto.module';
 import { TokenModule } from './libs/token/token.module';
-import { FeatureModule } from './application/features/feature.module';
+import { ControllerModule } from './application/controllers/controller.module';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { FeatureModule } from './application/features/feature.module';
     AppDataSourceModule,
     CryptoModule,
     TokenModule,
-    FeatureModule,
+    ControllerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
