@@ -7,6 +7,9 @@ async function bootstrap() {
   // Retrieve the PORT from ConfigService (defaults to 3000 if not set)
   const port = 3000;
 
+  // prefix
+  app.setGlobalPrefix('api');
+
   // -- Cors setup
   app.enableCors({
     origin: ['*', 'http://localhost:3001'],
