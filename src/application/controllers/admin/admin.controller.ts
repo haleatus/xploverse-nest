@@ -2,7 +2,7 @@ import { Controller, Body, Get, Post } from '@nestjs/common';
 import { AdminUseCaseService } from 'src/use-cases/admin-use-cases/admin-use-case.service';
 import { AdminSignUpDto } from 'src/core/dtos/request/signup.dto';
 
-@Controller('/api/admin')
+@Controller('/admin')
 export class AdminController {
   constructor(private adminUseCaseService: AdminUseCaseService) {}
 

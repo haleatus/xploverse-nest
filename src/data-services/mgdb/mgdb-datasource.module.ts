@@ -1,9 +1,15 @@
 import { DataSource } from 'typeorm';
 import { Global, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AdminEntity } from './entities/admin.entity';
+import { UserEntity } from './entities/user.entity';
+import { TripEntity } from './entities/trip.entity';
 
 @Global() // makes the module available globally for other modules once imported in the app modules
 @Module({
-  imports: [],
+  imports: [
+    TypeOrmModule.forFeature([AdminEntity, UserEntity, TripEntity]), // Register repositories
+  ],
   providers: [
     {
       provide: DataSource, // add the datasource as a provider
@@ -32,6 +38,9 @@ import { Global, Module } from '@nestjs/common';
       },
     },
   ],
-  exports: [DataSource],
+  exports: [
+    DataSource,
+    TypeOrmModule.forFeature([AdminEntity, UserEntity, TripEntity]), // Export repositories here
+  ],
 })
 export class AppDataSourceModule {}

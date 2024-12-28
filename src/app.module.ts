@@ -6,6 +6,8 @@ import { AppDataSourceModule } from './data-services/mgdb/mgdb-datasource.module
 import { CryptoModule } from './libs/crypto/crypto.module';
 import { TokenModule } from './libs/token/token.module';
 import { ControllerModule } from './application/controllers/controller.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './application/guards/auth/auth.guard';
 
 @Module({
   imports: [
@@ -16,6 +18,12 @@ import { ControllerModule } from './application/controllers/controller.module';
     ControllerModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
