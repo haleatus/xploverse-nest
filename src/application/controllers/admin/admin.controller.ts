@@ -1,4 +1,4 @@
-import { Controller, Body, Get, Post } from '@nestjs/common';
+import { Controller, Body, Get, Post, Req } from '@nestjs/common';
 import { AdminUseCaseService } from 'src/use-cases/admin-use-cases/admin-use-case.service';
 import { AdminSignUpDto } from 'src/core/dtos/request/signup.dto';
 
@@ -14,5 +14,10 @@ export class AdminController {
   @Get('/get-all')
   async getAll() {
     return await this.adminUseCaseService.findAllAdmin();
+  }
+
+  @Get('/me')
+  async getMe(@Req() req: any) {
+    return req.admin;
   }
 }
