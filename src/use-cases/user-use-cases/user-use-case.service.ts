@@ -11,14 +11,14 @@ import { UserSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 
 @Injectable()
-export class UserService {
+export class UserUseCaseService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
     private bcryptService: BcryptService,
   ) {}
 
-  async UserSignUp(dto: UserSignUpDto) {
+  async userSignUp(dto: UserSignUpDto) {
     const user = await this.userRepository.findOneBy({
       username: dto.username,
     });
@@ -38,7 +38,7 @@ export class UserService {
     return users;
   }
 
-  async findAdminByUsername(username: string) {
+  async findUserByUsername(username: string) {
     const user = await this.userRepository.findOneBy({
       username: username,
     });
@@ -48,7 +48,7 @@ export class UserService {
     return user;
   }
 
-  async findAdminById(id: ObjectId) {
+  async findUserById(id: ObjectId) {
     const user = await this.userRepository.findOneBy({
       _id: id,
     });

@@ -11,7 +11,7 @@ import { AdminSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 
 @Injectable()
-export class AdminService {
+export class AdminUseCaseService {
   constructor(
     @InjectRepository(AdminEntity)
     private adminRepository: Repository<AdminEntity>,
