@@ -20,9 +20,6 @@ export class TripEntity extends BaseEntity {
   trip_image: FileEntity;
 
   @ManyToOne(() => UserEntity)
-  @JoinColumn({
-    name: 'planner',
-  })
   planner: UserEntity;
 
   @Column({

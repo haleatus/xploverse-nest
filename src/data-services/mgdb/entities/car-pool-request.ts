@@ -21,14 +21,8 @@ export class CarPoolRequestEntity extends BaseEntity {
   participants_count: number;
 
   @ManyToOne(() => TripEntity)
-  @JoinColumn({
-    name: 'trip_id',
-  })
-  trip_id: TripEntity;
+  trip: TripEntity;
 
-  @ManyToOne(() => TripEntity)
-  @JoinColumn({
-    name: 'requester_id',
-  })
+  @ManyToOne(() => UserEntity)
   requester: UserEntity;
 }
