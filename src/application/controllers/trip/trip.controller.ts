@@ -8,10 +8,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { Public } from 'src/application/decorators/public.decorator';
-import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
 import { TripUseCaseService } from 'src/use-cases/trip-use-cases/trip-use-case.service';
 
-@Controller('/trip')
+@Controller()
 export class TripController {
   constructor(private tripUseCaseService: TripUseCaseService) {}
 
