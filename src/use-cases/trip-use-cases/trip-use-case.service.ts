@@ -25,7 +25,6 @@ export class TripUseCaseService {
   }
 
   async findTripsByPlanner(id: ObjectId) {
-    // const planner_id = convertToObjectId(id);
     const planner = await this.userRepository.findOneBy({
       _id: id,
     });
