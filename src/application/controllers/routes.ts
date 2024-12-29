@@ -17,11 +17,11 @@ const routes: Routes = [
         children: [AdminControllerModule],
       },
       {
-        path: 'user',
+        path: '/user',
         children: [UserControllerModule],
       },
       {
-        path: 'trip',
+        path: '/trip',
         children: [TripControllerModule],
       },
     ],
