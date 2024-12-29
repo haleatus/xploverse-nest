@@ -16,14 +16,8 @@ export class TripRatingEntity extends BaseEntity {
   comment: string;
 
   @ManyToOne(() => UserEntity)
-  @JoinColumn({
-    name: 'rater_id',
-  })
   rater: UserEntity;
 
   @ManyToOne(() => TripEntity)
-  @JoinColumn({
-    name: 'trip_id',
-  })
   trip: TripEntity;
 }

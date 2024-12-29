@@ -15,11 +15,6 @@ import { TripUseCaseService } from 'src/use-cases/trip-use-cases/trip-use-case.s
 export class TripController {
   constructor(private tripUseCaseService: TripUseCaseService) {}
 
-  @Post('/create')
-  async create(@Body() dto: CreateTripDto) {
-    return await this.tripUseCaseService.createTrip(dto);
-  }
-
   @Public()
   @Get('/get-all')
   async getAll() {
@@ -29,15 +24,5 @@ export class TripController {
   @Get('/get/:id')
   async getOne(@Param('id') id: string) {
     return await this.tripUseCaseService.findTripById(id);
-  }
-
-  @Patch('/update/:id')
-  async update(@Param('id') id: string, @Body() dto: updateTripDto) {
-    return await this.tripUseCaseService.updateTrip(id, dto);
-  }
-
-  @Delete('/Delete/:id')
-  async delete(@Param('id') id: string) {
-    return await this.tripUseCaseService.deleteTripById(id);
   }
 }

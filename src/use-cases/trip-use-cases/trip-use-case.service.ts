@@ -18,14 +18,11 @@ export class TripUseCaseService {
   ) {}
 
   async findAllTrip() {
-    const trips = await this.tripRepository.find({
-      relations: ['planner'],
-    });
+    const trips = await this.tripRepository.find();
     return trips;
   }
 
   async findTripsByPlanner(id: ObjectId) {
-    // const planner_id = convertToObjectId(id);
     const planner = await this.userRepository.findOneBy({
       _id: id,
     });
@@ -40,9 +37,9 @@ export class TripUseCaseService {
     return trips;
   }
 
-  async createTrip(dto: CreateTripDto): Promise<TripEntity> {
+  async createTrip(id: ObjectId, dto: CreateTripDto): Promise<TripEntity> {
     const planner = await this.userRepository.findOneBy({
-      _id: convertToObjectId(dto.planner_id),
+      _id: id,
     });
 
     if (!planner) {
