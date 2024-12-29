@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { Public } from 'src/application/decorators/public.decorator';
 import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
 import { TripUseCaseService } from 'src/use-cases/trip-use-cases/trip-use-case.service';
 
@@ -19,6 +20,7 @@ export class TripController {
     return await this.tripUseCaseService.createTrip(dto);
   }
 
+  @Public()
   @Get('/get-all')
   async getAll() {
     return await this.tripUseCaseService.findAllTrip();
