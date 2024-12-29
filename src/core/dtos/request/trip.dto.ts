@@ -5,7 +5,6 @@ import { TripStopsInterface } from 'src/common/interface/trip-stops.interfacet';
 export class CreateTripDto {
   title: string;
   description: string;
-  planner_id: string;
   trip_status?: TripStatusEnum;
   end_date: Date;
   start_point: GeoDataInterface;

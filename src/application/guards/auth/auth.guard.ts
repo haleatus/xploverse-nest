@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate {
     const { url: requestUrl } = request;
     const token = this.extractToken(request);
 
-    const isPublic = requestUrl.startsWith('/api/auth')
+    const isPublic = requestUrl.startsWith('/api/xploverse/auth')
       ? true
       : false ||
         this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
