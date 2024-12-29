@@ -6,6 +6,8 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from 'src/application/decorators/public.decorator';
 import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
 import { Request } from 'express';
 import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
@@ -18,6 +20,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtTokenService: JwtTokenService,
+    private reflector: Reflector,
 
     @InjectRepository(AdminEntity)
     private adminRepository: Repository<AdminEntity>,
@@ -35,7 +38,13 @@ export class AuthGuard implements CanActivate {
     const { url: requestUrl } = request;
     const token = this.extractToken(request);
 
-    const isPublic = requestUrl.startsWith('/api/auth') ? true : false;
+    const isPublic = requestUrl.startsWith('/api/auth')
+      ? true
+      : false ||
+        this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+          context.getHandler(), // Check route handler (method-level metadata)
+          context.getClass(), // Check controller (class-level metadata)
+        ]);
 
     if (isPublic) return true;
 

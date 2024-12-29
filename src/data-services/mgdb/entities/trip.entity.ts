@@ -21,7 +21,7 @@ export class TripEntity extends BaseEntity {
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({
-    name: 'planner_id',
+    name: 'planner',
   })
   planner: UserEntity;
 

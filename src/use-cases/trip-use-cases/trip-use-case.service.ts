@@ -5,22 +5,53 @@ import { Repository } from 'typeorm';
 import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
 import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
+import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class TripUseCaseService {
   constructor(
     @InjectRepository(TripEntity)
     private tripRepository: Repository<TripEntity>,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async findAllTrip() {
-    const trips = await this.tripRepository.find();
+    const trips = await this.tripRepository.find({
+      relations: ['planner'],
+    });
+    return trips;
+  }
+
+  async findTripsByPlanner(id: ObjectId) {
+    // const planner_id = convertToObjectId(id);
+    const planner = await this.userRepository.findOneBy({
+      _id: id,
+    });
+
+    if (!planner) {
+      throw new NotFoundException('Trip Planner does not exist');
+    }
+    const trips = await this.tripRepository.find({
+      where: { planner: planner },
+    });
+
     return trips;
   }
 
   async createTrip(dto: CreateTripDto): Promise<TripEntity> {
+    const planner = await this.userRepository.findOneBy({
+      _id: convertToObjectId(dto.planner_id),
+    });
+
+    if (!planner) {
+      throw new NotFoundException('Trip Planner does not exist');
+    }
+
     const newTrip = this.tripRepository.create({
       ...dto,
+      planner: planner,
       trip_status: dto.trip_status ?? TripStatusEnum.PENDING,
     });
     return await this.tripRepository.save(newTrip);
