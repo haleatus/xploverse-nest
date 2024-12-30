@@ -52,7 +52,9 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const isAdmin = requestUrl.startsWith('/api/admin') ? true : false;
+    const isAdmin = requestUrl.startsWith('/api/xploverse/admin')
+      ? true
+      : false;
 
     try {
       const decoded = await this.jwtTokenService.checkToken(token);

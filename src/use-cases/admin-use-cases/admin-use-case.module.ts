@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CryptoModule } from 'src/libs/crypto/crypto.module';
-import { TokenModule } from 'src/libs/token/token.module';
 import { AdminUseCaseService } from './admin-use-case.service';
-import { AdminAuthUseCaseService } from './admin-auth-use-case.service';
+import { AdminAuthUseCaseModule } from './admin-auth/admin-auth-use-case.module';
 
 @Module({
-  imports: [CryptoModule, TokenModule],
-  providers: [AdminUseCaseService, AdminAuthUseCaseService],
-  exports: [AdminUseCaseService, AdminAuthUseCaseService],
+  imports: [CryptoModule, AdminAuthUseCaseModule],
+  providers: [AdminUseCaseService],
+  exports: [AdminUseCaseService, AdminAuthUseCaseModule],
 })
 export class AdminUseCaseModule {}

@@ -1,7 +1,6 @@
 import { Column, Entity, OneToOne } from 'typeorm';
 import { BaseUserEntity } from './base.entity';
 import { FileEntity } from './file.entity';
-import { VerifyUserEnum } from 'src/common/enums/verify-user.enum';
 
 @Entity('users')
 export class UserEntity extends BaseUserEntity {
@@ -9,13 +8,10 @@ export class UserEntity extends BaseUserEntity {
   profile_picture: FileEntity;
 
   @Column({
-    name: 'is_verified',
-    type: 'enum',
-    enum: VerifyUserEnum,
-    default: VerifyUserEnum.PENDING,
+    name: 'is_operator',
     nullable: false,
   })
-  is_verified: VerifyUserEnum;
+  is_operator: boolean;
 
   @Column({ name: 'phone_number', unique: true, nullable: false })
   phone_number: string;

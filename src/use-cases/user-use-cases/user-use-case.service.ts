@@ -28,6 +28,7 @@ export class UserUseCaseService {
     }
 
     const newUser = this.userRepository.create(dto);
+    newUser.is_operator = dto.is_operator ? dto.is_operator : false;
     newUser.password = await this.bcryptService.hash(dto.password);
 
     return await this.userRepository.save(newUser);
