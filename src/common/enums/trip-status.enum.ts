@@ -1,7 +1,6 @@
 export enum TripStatusEnum {
-  PENDING = 'PENDING',
-  ACCEPTED = 'ACCEPTED',
-  DECLINED = 'DECLINED',
+  AVAILABLE = 'AVAILABLE',
+  OCCUPIED = 'OCCUPIED',
 }
 
 export enum CarPoolStatusEnum {

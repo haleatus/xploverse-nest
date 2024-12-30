@@ -11,7 +11,7 @@ import {
 import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
 import { TripUseCaseService } from 'src/use-cases/trip-use-cases/trip-use-case.service';
 
-@Controller('/user/trip')
+@Controller('/trip')
 export class UserTripController {
   constructor(private tripUseCaseService: TripUseCaseService) {}
 

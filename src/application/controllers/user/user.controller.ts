@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { UserUseCaseService } from 'src/use-cases/user-use-cases/user-use-case.service';
 import { UserSignUpDto } from 'src/core/dtos/request/signup.dto';
 
-@Controller('/user')
+@Controller()
 export class UserController {
   constructor(private userUsecaseService: UserUseCaseService) {}
 

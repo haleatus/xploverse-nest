@@ -49,7 +49,7 @@ export class TripUseCaseService {
     const newTrip = this.tripRepository.create({
       ...dto,
       planner: planner,
-      trip_status: dto.trip_status ?? TripStatusEnum.PENDING,
+      trip_status: dto.trip_status ?? TripStatusEnum.AVAILABLE,
     });
     return await this.tripRepository.save(newTrip);
   }
