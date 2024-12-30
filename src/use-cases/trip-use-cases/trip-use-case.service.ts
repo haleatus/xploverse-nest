@@ -13,7 +13,9 @@ export class TripUseCaseService {
   ) {}
 
   async findAllTrip() {
-    const trips = await this.tripRepository.find();
+    const trips = await this.tripRepository.find({
+      where: { is_car_pool: true },
+    });
     return trips;
   }
 

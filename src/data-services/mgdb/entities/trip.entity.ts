@@ -1,7 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
-import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 import { FileEntity } from './file.entity';
 
 @Entity('trips')
@@ -21,15 +20,6 @@ export class TripEntity extends BaseEntity {
 
   @ManyToOne(() => UserEntity)
   planner: UserEntity;
-
-  @Column({
-    name: 'trip_status',
-    type: 'enum',
-    enum: TripStatusEnum,
-    default: TripStatusEnum.AVAILABLE,
-    nullable: false,
-  })
-  trip_status: TripStatusEnum;
 
   @Column({
     name: 'end_date',

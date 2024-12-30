@@ -3,7 +3,6 @@ import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
-import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { ObjectId } from 'mongodb';
@@ -17,9 +16,9 @@ export class UserTripUseCaseService {
     private userRepository: Repository<UserEntity>,
   ) {}
 
-  async findTripsByPlanner(id: ObjectId) {
+  async findTripsByPlanner(planner_id: ObjectId) {
     const planner = await this.userRepository.findOneBy({
-      _id: id,
+      _id: planner_id,
     });
 
     if (!planner) {
@@ -32,9 +31,12 @@ export class UserTripUseCaseService {
     return trips;
   }
 
-  async createTrip(id: ObjectId, dto: CreateTripDto): Promise<TripEntity> {
+  async createTrip(
+    planner_id: ObjectId,
+    dto: CreateTripDto,
+  ): Promise<TripEntity> {
     const planner = await this.userRepository.findOneBy({
-      _id: id,
+      _id: planner_id,
     });
 
     if (!planner) {
@@ -44,7 +46,7 @@ export class UserTripUseCaseService {
     const newTrip = this.tripRepository.create({
       ...dto,
       planner: planner,
-      trip_status: dto.trip_status ?? TripStatusEnum.AVAILABLE,
+      is_car_pool: dto.is_car_pool ?? false,
     });
     return await this.tripRepository.save(newTrip);
   }
