@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CarPoolRequestUseCaseService } from './carpool-use-case.service';
+import { CarPoolRequestUseCaseService } from './carpool-request-use-case.service';
 
 @Module({
   providers: [CarPoolRequestUseCaseService],

@@ -11,6 +11,11 @@ export class CarPoolRequestUseCaseService {
     private carPoolRequestRepository: Repository<CarPoolRequestEntity>,
   ) {}
 
+  async findAllCarPoolRequest() {
+    const carpool_requests = await this.carPoolRequestRepository.find();
+    return carpool_requests;
+  }
+
   async findCarPoolRequestById(id: string) {
     const carpool_request_id = convertToObjectId(id);
     const carpool_request = await this.carPoolRequestRepository.findOneBy({

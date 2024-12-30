@@ -9,18 +9,20 @@ import {
 } from 'src/core/dtos/request/carpool-request.dto';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
-import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { Repository } from 'typeorm';
+import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 
 @Injectable()
 export class UserCarPoolUseCaseService {
   constructor(
     @InjectRepository(TripEntity)
     private tripRepository: Repository<TripEntity>,
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+
     @InjectRepository(CarPoolRequestEntity)
     private carPoolRequestRepository: Repository<CarPoolRequestEntity>,
+
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async findCarPoolRequestsByTrip(trip_id: string) {
@@ -54,21 +56,48 @@ export class UserCarPoolUseCaseService {
     return updatedCarPoolRequest;
   }
 
+  async getCarPoolRequestByRequester(requester_id: ObjectId) {
+    const requester = await this.userRepository.findOneBy({
+      _id: requester_id,
+    });
+
+    if (!requester)
+      throw new NotFoundException('Requester user does not exist');
+
+    const carpool_request = await this.carPoolRequestRepository.findOne({
+      where: { requester: requester },
+    });
+
+    if (!carpool_request)
+      throw new NotFoundException(
+        'No carpool request has been made by this user',
+      );
+
+    return carpool_request;
+  }
+
   async createCarPoolRequest(
     trip_id: string,
+    requester_id: ObjectId,
     dto: CreateCarPoolRequestDto,
   ): Promise<CarPoolRequestEntity> {
     const trip = await this.tripRepository.findOneBy({
       _id: convertToObjectId(trip_id),
     });
 
-    if (!trip) {
-      throw new NotFoundException('Trip to request does not exist');
-    }
+    if (!trip) throw new NotFoundException('Trip to request does not exist');
+
+    const requester = await this.userRepository.findOneBy({
+      _id: requester_id,
+    });
+
+    if (!requester)
+      throw new NotFoundException('User to initiate request does not exist');
 
     const newCarPoolRequest = this.carPoolRequestRepository.create({
       ...dto,
       trip: trip,
+      requester: requester,
       carpool_status: dto.carpool_status ?? CarPoolStatusEnum.PENDING,
     });
 
