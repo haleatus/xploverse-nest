@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { UserCarPoolUseCaseService } from './user-carpool-request-use-case.service';
+import { UserCarPoolRequestUseCaseService } from './user-carpool-request-use-case.service';
 
 @Module({
-  providers: [UserCarPoolUseCaseService],
-  exports: [UserCarPoolUseCaseService],
+  providers: [UserCarPoolRequestUseCaseService],
+  exports: [UserCarPoolRequestUseCaseService],
 })
 export class UserCarPoolRequestUseCaseModule {}

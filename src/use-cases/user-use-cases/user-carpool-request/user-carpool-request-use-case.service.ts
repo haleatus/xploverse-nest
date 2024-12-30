@@ -13,7 +13,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 
 @Injectable()
-export class UserCarPoolUseCaseService {
+export class UserCarPoolRequestUseCaseService {
   constructor(
     @InjectRepository(TripEntity)
     private tripRepository: Repository<TripEntity>,
@@ -62,7 +62,7 @@ export class UserCarPoolUseCaseService {
     });
 
     if (!requester)
-      throw new NotFoundException('Requester user does not exist');
+      throw new NotFoundException('Requesting user does not exist');
 
     const carpool_request = await this.carPoolRequestRepository.findOne({
       where: { requester: requester },
