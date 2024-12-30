@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { TripEntity } from './trip.entity';
 import { UserEntity } from './user.entity';
-import { CarPoolStatusEnum } from 'src/common/enums/trip-status.enum';
+import { CarPoolStatusEnum } from 'src/common/enums/car-pool-status.enum';
 
 @Entity('car_pool_requests')
 export class CarPoolRequestEntity extends BaseEntity {
