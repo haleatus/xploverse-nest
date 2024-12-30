@@ -7,18 +7,23 @@ import {
 import { SignInDto } from 'src/core/dtos/request/signin.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
-import { UserUseCaseService } from './user-use-case.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserAuthUseCaseService {
   constructor(
     private bcryptService: BcryptService,
     private jwtTokenService: JwtTokenService,
-    private userUseCaseService: UserUseCaseService,
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
   ) {}
 
   async signIn(dto: SignInDto) {
-    const user = await this.userUseCaseService.findUserByUsername(dto.username);
+    const user = await this.userRepository.findOne({
+      where: { username: dto.username },
+    });
 
     if (!user) throw new NotFoundException('user does not exist.');
 
