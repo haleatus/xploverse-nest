@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminEntity } from './entities/admin.entity';
 import { UserEntity } from './entities/user.entity';
 import { TripEntity } from './entities/trip.entity';
-import { CarPoolRequestEntity } from './entities/car-pool-request';
+import { CarPoolRequestEntity } from './entities/carpool-request';
 import { TripRatingEntity } from './entities/trip-rating';
 
 @Global() // makes the module available globally for other modules once imported in the app modules

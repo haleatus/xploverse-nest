@@ -2,18 +2,18 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { TripEntity } from './trip.entity';
 import { UserEntity } from './user.entity';
-import { CarPoolStatusEnum } from 'src/common/enums/car-pool-status.enum';
+import { CarPoolStatusEnum } from 'src/common/enums/carpool-status.enum';
 
-@Entity('car_pool_requests')
+@Entity('carpool_requests')
 export class CarPoolRequestEntity extends BaseEntity {
   @Column({
-    name: 'car_pool_status',
+    name: 'carpool_status',
     type: 'enum',
     enum: CarPoolStatusEnum,
     default: CarPoolStatusEnum.PENDING,
     nullable: false,
   })
-  car_pool_status: CarPoolStatusEnum;
+  carpool_status: CarPoolStatusEnum;
 
   @Column({
     name: 'participants_count',
