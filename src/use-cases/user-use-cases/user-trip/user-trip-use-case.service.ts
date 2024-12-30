@@ -9,18 +9,13 @@ import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { ObjectId } from 'mongodb';
 
 @Injectable()
-export class TripUseCaseService {
+export class UserTripUseCaseService {
   constructor(
     @InjectRepository(TripEntity)
     private tripRepository: Repository<TripEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
   ) {}
-
-  async findAllTrip() {
-    const trips = await this.tripRepository.find();
-    return trips;
-  }
 
   async findTripsByPlanner(id: ObjectId) {
     const planner = await this.userRepository.findOneBy({
@@ -52,15 +47,6 @@ export class TripUseCaseService {
       trip_status: dto.trip_status ?? TripStatusEnum.AVAILABLE,
     });
     return await this.tripRepository.save(newTrip);
-  }
-
-  async findTripById(id: string) {
-    const trip_id = convertToObjectId(id);
-    const trip = this.tripRepository.findOneBy({ _id: trip_id });
-    if (!trip) {
-      throw new NotFoundException('Trip does not exist');
-    }
-    return trip;
   }
 
   async updateTrip(id: string, dto: updateTripDto) {

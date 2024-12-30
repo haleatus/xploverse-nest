@@ -26,7 +26,7 @@ export class TripEntity extends BaseEntity {
     name: 'trip_status',
     type: 'enum',
     enum: TripStatusEnum,
-    default: TripStatusEnum.PENDING,
+    default: TripStatusEnum.AVAILABLE,
     nullable: false,
   })
   trip_status: TripStatusEnum;
