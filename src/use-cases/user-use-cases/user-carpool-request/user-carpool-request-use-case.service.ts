@@ -36,6 +36,24 @@ export class UserCarPoolUseCaseService {
     return carpool_requests;
   }
 
+  async carPoolRequestAction(id: string, dto: EditCarPoolRequestDto) {
+    const carpool_request_id = convertToObjectId(id);
+    const carpool_request = await this.carPoolRequestRepository.findOneBy({
+      _id: carpool_request_id,
+    });
+    if (!carpool_request)
+      throw new NotFoundException('Carpool request does not exist');
+    const updatedCarPoolRequest = {
+      ...carpool_request,
+      carpool_status: dto.carpool_status,
+    };
+    await this.carPoolRequestRepository.update(
+      { _id: carpool_request_id },
+      updatedCarPoolRequest,
+    );
+    return updatedCarPoolRequest;
+  }
+
   async createCarPoolRequest(
     trip_id: string,
     dto: CreateCarPoolRequestDto,
