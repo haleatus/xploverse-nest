@@ -26,28 +26,23 @@ export class UserCarPoolRequestController {
   }
 
   @Patch('/action/:id')
-  async action(@Param('id') id: string, dto: EditCarPoolRequestDto) {
+  async action(@Param('id') id: string, @Body() dto: EditCarPoolRequestDto) {
     return await this.userCarPoolRequestUseCaseService.carPoolRequestAction(
       id,
       dto,
     );
   }
 
-  @Post('/create/:id')
-  async create(
-    @Req() req: any,
-    @Param('id') id: string,
-    dto: CreateCarPoolRequestDto,
-  ) {
+  @Post('/create')
+  async create(@Req() req: any, @Body() dto: CreateCarPoolRequestDto) {
     return await this.userCarPoolRequestUseCaseService.createCarPoolRequest(
-      id,
-      req.user_id,
+      req.user._id,
       dto,
     );
   }
 
   @Patch('/update/:id')
-  async update(@Param('id') id: string, dto: EditCarPoolRequestDto) {
+  async update(@Param('id') id: string, @Body() dto: EditCarPoolRequestDto) {
     return await this.userCarPoolRequestUseCaseService.updateCarPoolRequest(
       id,
       dto,

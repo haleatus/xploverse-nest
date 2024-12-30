@@ -77,12 +77,11 @@ export class UserCarPoolRequestUseCaseService {
   }
 
   async createCarPoolRequest(
-    trip_id: string,
     requester_id: ObjectId,
     dto: CreateCarPoolRequestDto,
   ): Promise<CarPoolRequestEntity> {
     const trip = await this.tripRepository.findOneBy({
-      _id: convertToObjectId(trip_id),
+      _id: convertToObjectId(dto.trip),
     });
 
     if (!trip) throw new NotFoundException('Trip to request does not exist');
@@ -98,7 +97,9 @@ export class UserCarPoolRequestUseCaseService {
       ...dto,
       trip: trip,
       requester: requester,
-      carpool_status: dto.carpool_status ?? CarPoolStatusEnum.PENDING,
+      carpool_status: dto.carpool_status
+        ? dto.carpool_status
+        : CarPoolStatusEnum.PENDING,
     });
 
     return await this.carPoolRequestRepository.save(newCarPoolRequest);

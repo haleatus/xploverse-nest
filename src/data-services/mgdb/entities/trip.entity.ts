@@ -3,6 +3,8 @@ import { BaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
 import { FileEntity } from './file.entity';
 
+// toBeFixed :: all entities need to be fixed for mongodb specific
+
 @Entity('trips')
 export class TripEntity extends BaseEntity {
   @Column({
