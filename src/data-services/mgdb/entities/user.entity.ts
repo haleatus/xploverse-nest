@@ -8,11 +8,10 @@ export class UserEntity extends BaseUserEntity {
   profile_picture: FileEntity;
 
   @Column({
-    name: 'is_verified',
+    name: 'is_operator',
     nullable: false,
-    default: false,
   })
-  is_verified: boolean;
+  is_operator: boolean;
 
   @Column({ name: 'phone_number', unique: true, nullable: false })
   phone_number: string;
