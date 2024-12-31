@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { UserOperatorGuard } from 'src/application/guards/user-operator.guard';
 import {
   CreateCarPoolRequestDto,
   EditCarPoolRequestDto,
@@ -25,6 +35,7 @@ export class UserCarPoolRequestController {
     );
   }
 
+  @UseGuards(UserOperatorGuard)
   @Patch('/action/:id')
   async action(@Param('id') id: string, @Body() dto: EditCarPoolRequestDto) {
     return await this.userCarPoolRequestUseCaseService.carPoolRequestAction(

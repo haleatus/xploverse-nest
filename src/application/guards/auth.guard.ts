@@ -38,13 +38,16 @@ export class AuthGuard implements CanActivate {
     const { url: requestUrl } = request;
     const token = this.extractToken(request);
 
-    const isPublic = requestUrl.startsWith('/api/xploverse/auth')
-      ? true
-      : false ||
-        this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-          context.getHandler(), // Check route handler (method-level metadata)
-          context.getClass(), // Check controller (class-level metadata)
-        ]);
+    const isPublic =
+      requestUrl.startsWith('/api/xploverse/auth') ||
+      requestUrl.startsWith('/api/xploverse/admin/create') ||
+      requestUrl.startsWith('/api/xploverse/user/create')
+        ? true
+        : false ||
+          this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+            context.getHandler(), // Check route handler (method-level metadata)
+            context.getClass(), // Check controller (class-level metadata)
+          ]);
 
     if (isPublic) return true;
 
@@ -56,6 +59,8 @@ export class AuthGuard implements CanActivate {
       ? true
       : false;
 
+    const isUser = requestUrl.startsWith('/api/xploverse/user') ? true : false;
+
     try {
       const decoded = await this.jwtTokenService.checkToken(token);
       if (isAdmin) {
@@ -66,7 +71,7 @@ export class AuthGuard implements CanActivate {
         if (!admin) throw new NotFoundException('admin does not exist');
 
         request.admin = admin;
-      } else {
+      } else if (isUser) {
         const user = await this.userRepository.findOneBy({
           _id: convertToObjectId(decoded._id),
         });
