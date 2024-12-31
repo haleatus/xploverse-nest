@@ -25,7 +25,7 @@ export class UserTripUseCaseService {
       throw new NotFoundException('Trip Planner does not exist');
     }
     const trips = await this.tripRepository.find({
-      where: { planner: planner },
+      where: { planner: planner._id },
     });
 
     return trips;
@@ -45,7 +45,7 @@ export class UserTripUseCaseService {
 
     const newTrip = this.tripRepository.create({
       ...dto,
-      planner: planner,
+      planner: planner._id,
       is_car_pool: dto.is_car_pool ?? false,
     });
     return await this.tripRepository.save(newTrip);

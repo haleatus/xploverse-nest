@@ -1,23 +1,18 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { TripEntity } from './trip.entity';
-import { UserEntity } from './user.entity';
+import { ObjectId } from 'mongodb';
 
 @Entity('trip_ratings')
 export class TripRatingEntity extends BaseEntity {
-  @Column({
-    name: 'ratings',
-  })
+  @Column()
   ratings: number;
 
-  @Column({
-    name: 'comment',
-  })
+  @Column()
   comment: string;
 
-  @ManyToOne(() => UserEntity)
-  rater: UserEntity;
+  @Column()
+  rater: ObjectId;
 
-  @ManyToOne(() => TripEntity)
-  trip: TripEntity;
+  @Column()
+  trip: ObjectId;
 }

@@ -3,18 +3,12 @@ import { BaseEntity } from './base.entity';
 
 @Entity('file')
 export class FileEntity extends BaseEntity {
-  @Column({
-    name: 'name',
-  })
+  @Column()
   name: string;
 
-  @Column({
-    name: 'type',
-  })
+  @Column()
   type: string;
 
-  @Column({
-    name: 'path',
-  })
+  @Column()
   path: string;
 }

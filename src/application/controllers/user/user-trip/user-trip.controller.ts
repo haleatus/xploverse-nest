@@ -7,11 +7,14 @@ import {
   Req,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import { UserOperatorGuard } from 'src/application/guards/user-operator.guard';
 import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
 import { UserTripUseCaseService } from 'src/use-cases/user-use-cases/user-trip/user-trip-use-case.service';
 
 @Controller('/trip')
+@UseGuards(UserOperatorGuard)
 export class UserTripController {
   constructor(private userTripUseCaseService: UserTripUseCaseService) {}
 

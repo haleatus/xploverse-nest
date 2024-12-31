@@ -1,18 +1,15 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseUserEntity } from './base.entity';
-import { FileEntity } from './file.entity';
+import { ObjectId } from 'mongodb';
 
 @Entity('users')
 export class UserEntity extends BaseUserEntity {
-  @OneToOne(() => FileEntity, { cascade: true, eager: true })
-  profile_picture: FileEntity;
+  @Column()
+  profile_picture: ObjectId;
 
-  @Column({
-    name: 'is_operator',
-    nullable: false,
-  })
+  @Column()
   is_operator: boolean;
 
-  @Column({ name: 'phone_number', unique: true, nullable: false })
+  @Column()
   phone_number: string;
 }

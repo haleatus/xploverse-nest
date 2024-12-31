@@ -1,58 +1,48 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { UserEntity } from './user.entity';
-import { FileEntity } from './file.entity';
+import { ObjectId } from 'mongodb';
+
+// toBeFixed :: all entities need to be fixed for mongodb specific
 
 @Entity('trips')
 export class TripEntity extends BaseEntity {
-  @Column({
-    name: 'title',
-  })
+  @Column()
   title: string;
 
-  @Column({
-    name: 'description',
-  })
+  @Column()
   description: string;
 
-  @OneToOne(() => FileEntity, { cascade: true, eager: true })
-  trip_image: FileEntity;
+  @Column()
+  trip_image: ObjectId;
 
-  @ManyToOne(() => UserEntity)
-  planner: UserEntity;
+  @Column()
+  planner: ObjectId;
 
-  @Column({
-    name: 'end_date',
-  })
+  @Column()
   end_date: Date;
 
-  @Column('simple-json', { nullable: true })
+  @Column()
   start_point: {
     latitude: string;
     longitude: string;
   };
 
-  @Column('simple-json', { nullable: true })
+  @Column()
   end_point: {
     latitude: string;
     longitude: string;
   };
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column()
   stops: {
     type: string;
     latitude: string;
     longitude: string;
   };
 
-  @Column({
-    name: 'is_car_pool',
-    default: false,
-  })
+  @Column()
   is_car_pool: boolean;
 
-  @Column({
-    name: 'max_participants',
-  })
+  @Column()
   max_participants: number;
 }

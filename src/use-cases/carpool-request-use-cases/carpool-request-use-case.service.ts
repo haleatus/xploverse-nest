@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request';
+import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
 
 @Injectable()
