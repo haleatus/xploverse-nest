@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminEntity } from './entities/admin.entity';
 import { UserEntity } from './entities/user.entity';
 import { TripEntity } from './entities/trip.entity';
-import { CarPoolRequestEntity } from './entities/carpool-request';
+import { CarPoolRequestEntity } from './entities/carpool-request.entity';
 import { TripRatingEntity } from './entities/trip-rating';
 
 @Global() // makes the module available globally for other modules once imported in the app modules
@@ -28,6 +28,7 @@ import { TripRatingEntity } from './entities/trip-rating';
           const dataSource = new DataSource({
             type: 'mongodb',
             url: process.env.DB_URL,
+            // url: process.env.DOCKER_MONGO_EXPRESS,
             database: process.env.DB_NAME,
             synchronize: true,
             // Enable logging for database operations

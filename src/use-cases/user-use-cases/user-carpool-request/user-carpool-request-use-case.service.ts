@@ -7,7 +7,7 @@ import {
   CreateCarPoolRequestDto,
   EditCarPoolRequestDto,
 } from 'src/core/dtos/request/carpool-request.dto';
-import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request';
+import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { Repository } from 'typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
@@ -32,7 +32,7 @@ export class UserCarPoolRequestUseCaseService {
     if (!trip) throw new NotFoundException('Trip does not exist');
 
     const carpool_requests = await this.carPoolRequestRepository.find({
-      where: { trip: trip },
+      where: { trip: trip._id },
     });
 
     return carpool_requests;
@@ -65,7 +65,7 @@ export class UserCarPoolRequestUseCaseService {
       throw new NotFoundException('Requesting user does not exist');
 
     const carpool_request = await this.carPoolRequestRepository.findOne({
-      where: { requester: requester },
+      where: { requester: requester._id },
     });
 
     if (!carpool_request)
@@ -95,8 +95,8 @@ export class UserCarPoolRequestUseCaseService {
 
     const newCarPoolRequest = this.carPoolRequestRepository.create({
       ...dto,
-      trip: trip,
-      requester: requester,
+      trip: trip._id,
+      requester: requester._id,
       carpool_status: dto.carpool_status
         ? dto.carpool_status
         : CarPoolStatusEnum.PENDING,

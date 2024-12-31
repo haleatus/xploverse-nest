@@ -1,48 +1,43 @@
 import {
-  CreateDateColumn,
-  DeleteDateColumn,
-  ObjectId,
   ObjectIdColumn,
-  UpdateDateColumn,
   Column,
+  BaseEntity as TypeOrmBaseEntity,
 } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
-export class BaseEntity {
+export class BaseEntity extends TypeOrmBaseEntity {
   @ObjectIdColumn()
   _id: ObjectId;
 
-  @CreateDateColumn({
-    type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    name: 'created_at',
-  })
-  public createdAt?: Date;
+  @Column({ type: 'date', default: () => new Date() }) // Use native JavaScript Date for MongoDB
+  public createdAt: Date = new Date();
 
-  @UpdateDateColumn({
-    type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-    name: 'updated_at',
-  })
-  public updatedAt?: Date;
+  @Column({ type: 'date', default: () => new Date() })
+  public updatedAt: Date = new Date();
 
-  @DeleteDateColumn({
-    type: 'timestamptz',
-    default: null,
-    nullable: true,
-    select: false,
-    name: 'deleted_at',
-  })
+  @Column({ type: 'date', nullable: true, select: false })
   public deletedAt?: Date;
 
-  toResponse(exclude: string[] = ['updatedAt', 'deletedAt']) {
-    // loop through the excluded properties and remove them from the response object
-    Object.keys(this).forEach((key) => {
-      if (exclude.includes(key)) delete this[key];
-    });
-    return this;
+  /**
+   * Hook to update `updatedAt` automatically before save.
+   */
+  preSave() {
+    this.updatedAt = new Date();
   }
 
+  /**
+   * Excludes specified fields from the response object.
+   * @param exclude - Array of field names to exclude.
+   */
+  toResponse(exclude: string[] = ['updatedAt', 'deletedAt']) {
+    const response = { ...this }; // Create a shallow copy
+    exclude.forEach((field) => delete response[field]);
+    return response;
+  }
+
+  /**
+   * Generates a standardized repository name for the entity.
+   */
   static get REPOSITORY(): string {
     const name = this.name
       .replace(/([A-Z])/g, ' $1')
@@ -56,28 +51,24 @@ export class BaseEntity {
 }
 
 export class RefreshTokenBaseEntity extends BaseEntity {
-  @Column({
-    name: 'token',
-  })
+  @Column()
   token: string;
 
-  @Column({
-    name: 'expiry_data',
-  })
+  @Column()
   expiry_data: Date;
 }
 
 export class BaseUserEntity extends BaseEntity {
-  @Column({ name: 'username', unique: true })
+  @Column()
   username: string;
 
-  @Column({ name: 'fullname' })
+  @Column()
   fullname: string;
 
-  @Column({ name: 'email', unique: true })
+  @Column()
   email: string;
 
-  @Column({ name: 'password' })
+  @Column()
   password: string;
 
   toJSON() {
