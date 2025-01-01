@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -73,13 +74,17 @@ export class UserCarPoolRequestUseCaseService {
     return updatedCarPoolRequest;
   }
 
-  async markCarPoolAsComplete(
-    carpool_request_id: string,
-    dto: EditCarPoolRequestDto,
-  ) {
-    const carpoolRequest = await this.carPoolRequestRepository.findOneBy({
-      _id: convertToObjectId(carpool_request_id),
+  async markCarPoolAsComplete(trip_id: string) {
+    const trip = await this.tripRepository.findOneBy({
+      _id: convertToObjectId(trip_id),
     });
+
+    if (!trip) throw new NotFoundException('trip does not exist');
+
+    const carpoolRequest = await this.carPoolRequestRepository.findOne({
+      where: { trip: trip._id },
+    });
+
     if (!carpoolRequest)
       throw new NotFoundException('Carpool request does not exist');
 
@@ -92,6 +97,8 @@ export class UserCarPoolRequestUseCaseService {
       { _id: carpoolRequest._id },
       updatedCarPoolRequest,
     );
+
+    return updatedCarPoolRequest;
   }
 
   async getCarPoolRequestByRequester(requester_id: ObjectId) {

@@ -19,6 +19,9 @@ export class TripEntity extends BaseEntity {
   planner: ObjectId;
 
   @Column()
+  start_date: Date;
+
+  @Column()
   end_date: Date;
 
   @Column()

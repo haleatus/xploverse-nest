@@ -4,6 +4,7 @@ import { TripStopsInterface } from 'src/common/interface/trip-stops.interfacet';
 export class CreateTripDto {
   title: string;
   description: string;
+  start_date: Date;
   end_date: Date;
   start_point: GeoDataInterface;
   end_point: GeoDataInterface;
@@ -15,6 +16,7 @@ export class CreateTripDto {
 export class updateTripDto {
   title?: string;
   description?: string;
+  start_date?: Date;
   end_date?: Date;
   start_point?: GeoDataInterface;
   end_point?: GeoDataInterface;

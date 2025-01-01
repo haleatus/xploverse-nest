@@ -47,15 +47,11 @@ export class UserCarPoolRequestController {
     );
   }
 
-  // todo :: route in postman and testing
-  @Patch('/mark-as-complete/:id')
-  async mark(
-    @Param('id') carpool_request_id: string,
-    @Body() dto: EditCarPoolRequestDto,
-  ) {
+  @UseGuards(UserOperatorGuard)
+  @Patch('/trip/mark-as-complete/:id')
+  async mark(@Param('id') trip_id: string) {
     return await this.userCarPoolRequestUseCaseService.markCarPoolAsComplete(
-      carpool_request_id,
-      dto,
+      trip_id,
     );
   }
 
