@@ -2,11 +2,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
-import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
+
 import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
-import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class TripUseCaseService {
@@ -18,40 +16,20 @@ export class TripUseCaseService {
   ) {}
 
   async findAllTrip() {
-    const trips = await this.tripRepository.find();
-    return trips;
-  }
-
-  async findTripsByPlanner(id: ObjectId) {
-    const planner = await this.userRepository.findOneBy({
-      _id: id,
-    });
-
-    if (!planner) {
-      throw new NotFoundException('Trip Planner does not exist');
-    }
     const trips = await this.tripRepository.find({
-      where: { planner: planner },
+      where: { is_car_pool: true },
     });
 
-    return trips;
-  }
+    return await Promise.all(
+      trips.map(async (trip) => {
+        const planner = await this.userRepository.findOne({
+          where: { _id: trip.planner },
+          select: ['username', 'email', 'phone_number'],
+        });
 
-  async createTrip(id: ObjectId, dto: CreateTripDto): Promise<TripEntity> {
-    const planner = await this.userRepository.findOneBy({
-      _id: id,
-    });
-
-    if (!planner) {
-      throw new NotFoundException('Trip Planner does not exist');
-    }
-
-    const newTrip = this.tripRepository.create({
-      ...dto,
-      planner: planner,
-      trip_status: dto.trip_status ?? TripStatusEnum.AVAILABLE,
-    });
-    return await this.tripRepository.save(newTrip);
+        return { ...trip, planner };
+      }),
+    );
   }
 
   async findTripById(id: string) {
@@ -61,26 +39,5 @@ export class TripUseCaseService {
       throw new NotFoundException('Trip does not exist');
     }
     return trip;
-  }
-
-  async updateTrip(id: string, dto: updateTripDto) {
-    const trip_id = convertToObjectId(id);
-    const trip = await this.tripRepository.findOneBy({ _id: trip_id });
-    if (!trip) {
-      throw new NotFoundException('Trip does not exist');
-    }
-    const updatedTrip = { ...trip, ...dto };
-    await this.tripRepository.update({ _id: trip._id }, updatedTrip);
-    return updatedTrip;
-  }
-
-  async deleteTripById(id: string) {
-    const trip_id = convertToObjectId(id);
-    const deletedTrip = this.tripRepository.findOneBy({ _id: trip_id });
-    if (!deletedTrip) {
-      throw new NotFoundException('Trip does not exist');
-    }
-    await this.tripRepository.delete({ _id: trip_id });
-    return deletedTrip;
   }
 }

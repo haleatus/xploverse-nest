@@ -7,11 +7,14 @@ import {
   Req,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
+import { UserOperatorGuard } from 'src/application/guards/user-operator.guard';
 import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
 import { UserTripUseCaseService } from 'src/use-cases/user-use-cases/user-trip/user-trip-use-case.service';
 
 @Controller('/trip')
+@UseGuards(UserOperatorGuard)
 export class UserTripController {
   constructor(private userTripUseCaseService: UserTripUseCaseService) {}
 
@@ -26,12 +29,12 @@ export class UserTripController {
   }
 
   @Patch('/update/:id')
-  async update(@Param('id') id: string, @Body() dto: updateTripDto) {
-    return await this.userTripUseCaseService.updateTrip(id, dto);
+  async update(@Param('id') trip_id: string, @Body() dto: updateTripDto) {
+    return await this.userTripUseCaseService.updateTrip(trip_id, dto);
   }
 
   @Delete('/Delete/:id')
-  async delete(@Param('id') id: string) {
-    return await this.userTripUseCaseService.deleteTripById(id);
+  async delete(@Param('id') trip_id: string) {
+    return await this.userTripUseCaseService.deleteTripById(trip_id);
   }
 }

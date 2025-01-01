@@ -3,6 +3,7 @@ import { AuthControllerModule } from './auth/auth-controller.module';
 import { AdminControllerModule } from './admin/admin-controller.module';
 import { UserControllerModule } from './user/user-controller.module';
 import { TripControllerModule } from './trip/trip-controller.module';
+import { CarPoolRequestControllerModule } from './carpool-request/carpool-request.controller.module';
 
 @Module({
   imports: [
@@ -10,12 +11,14 @@ import { TripControllerModule } from './trip/trip-controller.module';
     AdminControllerModule,
     UserControllerModule,
     TripControllerModule,
+    CarPoolRequestControllerModule,
   ],
   exports: [
     AuthControllerModule,
     AdminControllerModule,
     UserControllerModule,
     TripControllerModule,
+    CarPoolRequestControllerModule,
   ],
 })
 export class ControllerModule {}

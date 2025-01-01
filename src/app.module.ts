@@ -8,7 +8,7 @@ import { CryptoModule } from './libs/crypto/crypto.module';
 import { TokenModule } from './libs/token/token.module';
 import { ControllerModule } from './application/controllers/controller.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './application/guards/auth/auth.guard';
+import { AuthGuard } from './application/guards/auth.guard';
 import routes from './application/controllers/routes';
 
 @Module({

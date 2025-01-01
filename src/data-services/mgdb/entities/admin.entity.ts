@@ -1,4 +1,4 @@
-import { Column, Entity } from 'typeorm';
+import { Entity } from 'typeorm';
 import { BaseUserEntity } from './base.entity';
 
 // TODO :: nullable false garnu parxa
