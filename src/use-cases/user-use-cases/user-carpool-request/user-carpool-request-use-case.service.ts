@@ -61,9 +61,6 @@ export class UserCarPoolRequestUseCaseService {
       _id: requester_id,
     });
 
-    if (!requester)
-      throw new NotFoundException('Requesting user does not exist');
-
     const carpool_request = await this.carPoolRequestRepository.findOne({
       where: { requester: requester._id },
     });
@@ -89,9 +86,6 @@ export class UserCarPoolRequestUseCaseService {
     const requester = await this.userRepository.findOneBy({
       _id: requester_id,
     });
-
-    if (!requester)
-      throw new NotFoundException('User to initiate request does not exist');
 
     const newCarPoolRequest = this.carPoolRequestRepository.create({
       ...dto,

@@ -21,9 +21,6 @@ export class UserTripUseCaseService {
       _id: planner_id,
     });
 
-    if (!planner) {
-      throw new NotFoundException('Trip Planner does not exist');
-    }
     const trips = await this.tripRepository.find({
       where: { planner: planner._id },
     });
@@ -38,10 +35,6 @@ export class UserTripUseCaseService {
     const planner = await this.userRepository.findOneBy({
       _id: planner_id,
     });
-
-    if (!planner) {
-      throw new NotFoundException('Trip Planner does not exist');
-    }
 
     const newTrip = this.tripRepository.create({
       ...dto,
@@ -65,9 +58,6 @@ export class UserTripUseCaseService {
   async deleteTripById(id: string) {
     const trip_id = convertToObjectId(id);
     const deletedTrip = this.tripRepository.findOneBy({ _id: trip_id });
-    if (!deletedTrip) {
-      throw new NotFoundException('Trip does not exist');
-    }
     await this.tripRepository.delete({ _id: trip_id });
     return deletedTrip;
   }
