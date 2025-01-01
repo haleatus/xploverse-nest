@@ -29,7 +29,10 @@ export class UserCarPoolRequestUseCaseService {
     const trip = await this.tripRepository.findOneBy({
       _id: convertToObjectId(trip_id),
     });
-    if (!trip) throw new NotFoundException('Trip does not exist');
+    if (!trip)
+      throw new NotFoundException(
+        'Carpool request by this trip does not exist',
+      );
 
     const carpool_requests = await this.carPoolRequestRepository.find({
       where: { trip: trip._id },

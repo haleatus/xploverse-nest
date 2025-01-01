@@ -21,7 +21,7 @@ export class UserCarPoolRequestController {
     private userCarPoolRequestUseCaseService: UserCarPoolRequestUseCaseService,
   ) {}
 
-  @Get('/trip/:id')
+  @Get('/get/trip/:id')
   async getByTrip(@Param('id') trip_id: string) {
     return await this.userCarPoolRequestUseCaseService.findCarPoolRequestsByTrip(
       trip_id,

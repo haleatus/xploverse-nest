@@ -23,7 +23,7 @@ export class UserTripRatingController {
   }
 
   @Patch('/update/:id')
-  async update(trip_id: string, @Body() dto: TripRatingDto) {
+  async update(@Param('id') trip_id: string, @Body() dto: TripRatingDto) {
     return await this.userTripRatingUseCaseService.updateTripRating(
       trip_id,
       dto,
