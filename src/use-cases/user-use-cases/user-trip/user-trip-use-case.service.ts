@@ -6,6 +6,7 @@ import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
 import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { ObjectId } from 'mongodb';
+import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 
 @Injectable()
 export class UserTripUseCaseService {
@@ -14,7 +15,27 @@ export class UserTripUseCaseService {
     private tripRepository: Repository<TripEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(CarPoolRequestEntity)
+    private carPoolRequestRepository: Repository<CarPoolRequestEntity>,
   ) {}
+
+  async findTripByUserCarpoolRequests(user_id: ObjectId) {
+    const carpoolRequests = await this.carPoolRequestRepository.find({
+      where: { requester: user_id },
+    });
+
+    console.log(carpoolRequests);
+
+    const userTrips = await Promise.all(
+      carpoolRequests.map(async (carpoolRequest) => {
+        return await this.tripRepository.findOneBy({
+          _id: carpoolRequest.trip,
+        });
+      }),
+    );
+
+    return userTrips;
+  }
 
   async findTripsByPlanner(planner_id: ObjectId) {
     const planner = await this.userRepository.findOneBy({

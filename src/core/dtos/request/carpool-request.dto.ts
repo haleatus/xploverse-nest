@@ -1,12 +1,12 @@
-import { CarPoolStatusEnum } from 'src/common/enums/carpool-status.enum';
+import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
 
 export class CreateCarPoolRequestDto {
-  carpool_status?: CarPoolStatusEnum;
+  carpool_request_status?: CarPoolRequestStatusEnum;
   participants_count: number;
   trip: string;
 }
 
 export class EditCarPoolRequestDto {
-  carpool_status?: CarPoolStatusEnum;
+  carpool_request_status?: CarPoolRequestStatusEnum;
   participants_count?: number;
 }

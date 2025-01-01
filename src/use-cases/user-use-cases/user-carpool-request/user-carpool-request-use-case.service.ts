@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
-import { CarPoolStatusEnum } from 'src/common/enums/carpool-status.enum';
+import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
 import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
 import {
   CreateCarPoolRequestDto,
@@ -11,6 +15,7 @@ import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-re
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { Repository } from 'typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
+import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
 
 @Injectable()
 export class UserCarPoolRequestUseCaseService {
@@ -50,15 +55,43 @@ export class UserCarPoolRequestUseCaseService {
     });
     if (!carpoolRequest)
       throw new NotFoundException('Carpool request does not exist');
+
     const updatedCarPoolRequest = {
       ...carpoolRequest,
-      carpool_status: dto.carpool_status,
+      carpool_request_status: dto.carpool_request_status,
     };
+
+    (updatedCarPoolRequest.carpool_progress_status = dto.carpool_request_status
+      ? dto.carpool_request_status === CarPoolRequestStatusEnum.ACCEPTED
+        ? CarPoolProgressStatusEnum.IN_PROGRESS
+        : CarPoolProgressStatusEnum.NOT_STARTED
+      : CarPoolProgressStatusEnum.NOT_STARTED),
+      await this.carPoolRequestRepository.update(
+        { _id: carpoolRequest._id },
+        updatedCarPoolRequest,
+      );
+    return updatedCarPoolRequest;
+  }
+
+  async markCarPoolAsComplete(
+    carpool_request_id: string,
+    dto: EditCarPoolRequestDto,
+  ) {
+    const carpoolRequest = await this.carPoolRequestRepository.findOneBy({
+      _id: convertToObjectId(carpool_request_id),
+    });
+    if (!carpoolRequest)
+      throw new NotFoundException('Carpool request does not exist');
+
+    const updatedCarPoolRequest = {
+      ...carpoolRequest,
+      carpool_progress_status: CarPoolProgressStatusEnum.COMPLETED,
+    };
+
     await this.carPoolRequestRepository.update(
       { _id: carpoolRequest._id },
       updatedCarPoolRequest,
     );
-    return updatedCarPoolRequest;
   }
 
   async getCarPoolRequestByRequester(requester_id: ObjectId) {
@@ -92,13 +125,21 @@ export class UserCarPoolRequestUseCaseService {
       _id: requester_id,
     });
 
+    const carpoolRequest = await this.carPoolRequestRepository.findOne({
+      where: { requester: requester._id },
+    });
+
+    if (carpoolRequest)
+      throw new ConflictException('you can only make one request at a time');
+
     const newCarPoolRequest = this.carPoolRequestRepository.create({
       ...dto,
       trip: trip._id,
       requester: requester._id,
-      carpool_status: dto.carpool_status
-        ? dto.carpool_status
-        : CarPoolStatusEnum.PENDING,
+      carpool_request_status: dto.carpool_request_status
+        ? dto.carpool_request_status
+        : CarPoolRequestStatusEnum.PENDING,
+      carpool_progress_status: CarPoolProgressStatusEnum.NOT_STARTED,
     });
 
     return await this.carPoolRequestRepository.save(newCarPoolRequest);

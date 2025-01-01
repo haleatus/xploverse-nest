@@ -37,9 +37,24 @@ export class UserCarPoolRequestController {
 
   @UseGuards(UserOperatorGuard)
   @Patch('/action/:id')
-  async action(@Param('id') id: string, @Body() dto: EditCarPoolRequestDto) {
+  async action(
+    @Param('id') carpool_request_id: string,
+    @Body() dto: EditCarPoolRequestDto,
+  ) {
     return await this.userCarPoolRequestUseCaseService.carPoolRequestAction(
-      id,
+      carpool_request_id,
+      dto,
+    );
+  }
+
+  // todo :: route in postman and testing
+  @Patch('/mark-as-complete/:id')
+  async mark(
+    @Param('id') carpool_request_id: string,
+    @Body() dto: EditCarPoolRequestDto,
+  ) {
+    return await this.userCarPoolRequestUseCaseService.markCarPoolAsComplete(
+      carpool_request_id,
       dto,
     );
   }
@@ -53,9 +68,12 @@ export class UserCarPoolRequestController {
   }
 
   @Patch('/update/:id')
-  async update(@Param('id') id: string, @Body() dto: EditCarPoolRequestDto) {
+  async update(
+    @Param('id') carpool_request_id: string,
+    @Body() dto: EditCarPoolRequestDto,
+  ) {
     return await this.userCarPoolRequestUseCaseService.updateCarPoolRequest(
-      id,
+      carpool_request_id,
       dto,
     );
   }

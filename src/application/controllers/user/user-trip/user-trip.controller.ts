@@ -23,8 +23,16 @@ export class UserTripController {
     return await this.userTripUseCaseService.createTrip(req.user._id, dto);
   }
 
-  @Get('/my-trips')
-  async myTrips(@Req() req: any) {
+  // todo :: fix this functinality
+  @Get('/my-completed-trips')
+  async myCompletedTrips(@Req() req: any) {
+    await this.userTripUseCaseService.findTripByUserCarpoolRequests(
+      req.user_id,
+    );
+  }
+
+  @Get('/my-planned-trips')
+  async myPlannedTrips(@Req() req: any) {
     return await this.userTripUseCaseService.findTripsByPlanner(req.user._id);
   }
 
