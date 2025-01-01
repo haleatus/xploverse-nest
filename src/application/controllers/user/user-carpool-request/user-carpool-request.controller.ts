@@ -21,10 +21,10 @@ export class UserCarPoolRequestController {
     private userCarPoolRequestUseCaseService: UserCarPoolRequestUseCaseService,
   ) {}
 
-  @Get('/trip/:id')
-  async getByTrip(@Param('id') id: string) {
+  @Get('/get/trip/:id')
+  async getByTrip(@Param('id') trip_id: string) {
     return await this.userCarPoolRequestUseCaseService.findCarPoolRequestsByTrip(
-      id,
+      trip_id,
     );
   }
 

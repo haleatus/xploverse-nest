@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ObjectId } from 'mongodb';
 
 export class SignUpDto {
   @IsNotEmpty()
@@ -19,4 +20,13 @@ export class UserSignUpDto extends SignUpDto {
   phone_number: string;
 
   is_operator?: boolean;
+}
+
+export class EditUserDto {
+  username?: string;
+  fullname?: string;
+  @IsEmail()
+  email?: string;
+  profile_picture?: ObjectId;
+  phone_number?: string;
 }

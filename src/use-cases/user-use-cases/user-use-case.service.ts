@@ -9,6 +9,8 @@ import { Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 import { UserSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
+import { EditUserDto } from 'src/core/dtos/request/signup.dto';
+import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
 
 @Injectable()
 export class UserUseCaseService {
@@ -49,13 +51,22 @@ export class UserUseCaseService {
     return user;
   }
 
-  async findUserById(id: ObjectId) {
+  async findUserById(id: string) {
     const user = await this.userRepository.findOneBy({
-      _id: id,
+      _id: convertToObjectId(id),
     });
     if (!user) {
       throw new NotFoundException('user does not exist');
     }
     return user;
+  }
+
+  async editPersonalDetail(id: ObjectId, dto: EditUserDto) {
+    const user = await this.userRepository.findOneBy({
+      _id: id,
+    });
+    const updatedPersonalDetail = { ...user, ...dto };
+    await this.userRepository.update({ _id: user._id }, updatedPersonalDetail);
+    return updatedPersonalDetail;
   }
 }
