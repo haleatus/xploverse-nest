@@ -38,19 +38,21 @@ export class UserCarPoolRequestUseCaseService {
     return carpool_requests;
   }
 
-  async carPoolRequestAction(id: string, dto: EditCarPoolRequestDto) {
-    const carpool_request_id = convertToObjectId(id);
-    const carpool_request = await this.carPoolRequestRepository.findOneBy({
-      _id: carpool_request_id,
+  async carPoolRequestAction(
+    carpool_request_id: string,
+    dto: EditCarPoolRequestDto,
+  ) {
+    const carpoolRequest = await this.carPoolRequestRepository.findOneBy({
+      _id: convertToObjectId(carpool_request_id),
     });
-    if (!carpool_request)
+    if (!carpoolRequest)
       throw new NotFoundException('Carpool request does not exist');
     const updatedCarPoolRequest = {
-      ...carpool_request,
+      ...carpoolRequest,
       carpool_status: dto.carpool_status,
     };
     await this.carPoolRequestRepository.update(
-      { _id: carpool_request_id },
+      { _id: carpoolRequest._id },
       updatedCarPoolRequest,
     );
     return updatedCarPoolRequest;
@@ -61,16 +63,16 @@ export class UserCarPoolRequestUseCaseService {
       _id: requester_id,
     });
 
-    const carpool_request = await this.carPoolRequestRepository.findOne({
+    const carpoolRequest = await this.carPoolRequestRepository.findOne({
       where: { requester: requester._id },
     });
 
-    if (!carpool_request)
+    if (!carpoolRequest)
       throw new NotFoundException(
         'No carpool request has been made by this user',
       );
 
-    return carpool_request;
+    return carpoolRequest;
   }
 
   async createCarPoolRequest(
@@ -99,17 +101,19 @@ export class UserCarPoolRequestUseCaseService {
     return await this.carPoolRequestRepository.save(newCarPoolRequest);
   }
 
-  async updateCarPoolRequest(id: string, dto: EditCarPoolRequestDto) {
-    const carpool_request_id = convertToObjectId(id);
-    const carpool_request = await this.carPoolRequestRepository.findOneBy({
-      _id: carpool_request_id,
+  async updateCarPoolRequest(
+    carpool_request_id: string,
+    dto: EditCarPoolRequestDto,
+  ) {
+    const carpoolRequest = await this.carPoolRequestRepository.findOneBy({
+      _id: convertToObjectId(carpool_request_id),
     });
-    if (!carpool_request) {
+    if (!carpoolRequest) {
       throw new NotFoundException('Carpool request does not exist');
     }
-    const updatedCarPoolRequest = { ...carpool_request, ...dto };
+    const updatedCarPoolRequest = { ...carpoolRequest, ...dto };
     await this.carPoolRequestRepository.update(
-      { _id: carpool_request_id },
+      { _id: carpoolRequest._id },
       updatedCarPoolRequest,
     );
     return updatedCarPoolRequest;

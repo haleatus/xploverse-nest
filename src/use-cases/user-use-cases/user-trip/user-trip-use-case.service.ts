@@ -44,9 +44,10 @@ export class UserTripUseCaseService {
     return await this.tripRepository.save(newTrip);
   }
 
-  async updateTrip(id: string, dto: updateTripDto) {
-    const trip_id = convertToObjectId(id);
-    const trip = await this.tripRepository.findOneBy({ _id: trip_id });
+  async updateTrip(trip_id: string, dto: updateTripDto) {
+    const trip = await this.tripRepository.findOneBy({
+      _id: convertToObjectId(trip_id),
+    });
     if (!trip) {
       throw new NotFoundException('Trip does not exist');
     }
@@ -55,10 +56,14 @@ export class UserTripUseCaseService {
     return updatedTrip;
   }
 
-  async deleteTripById(id: string) {
-    const trip_id = convertToObjectId(id);
-    const deletedTrip = this.tripRepository.findOneBy({ _id: trip_id });
-    await this.tripRepository.delete({ _id: trip_id });
+  async deleteTripById(trip_id: string) {
+    const deletedTrip = await this.tripRepository.findOneBy({
+      _id: convertToObjectId(trip_id),
+    });
+
+    if (!deletedTrip) throw new NotFoundException('trip not found');
+
+    await this.tripRepository.delete({ _id: deletedTrip._id });
     return deletedTrip;
   }
 }

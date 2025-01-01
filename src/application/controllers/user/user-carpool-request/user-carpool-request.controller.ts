@@ -22,9 +22,9 @@ export class UserCarPoolRequestController {
   ) {}
 
   @Get('/trip/:id')
-  async getByTrip(@Param('id') id: string) {
+  async getByTrip(@Param('id') trip_id: string) {
     return await this.userCarPoolRequestUseCaseService.findCarPoolRequestsByTrip(
-      id,
+      trip_id,
     );
   }
 
