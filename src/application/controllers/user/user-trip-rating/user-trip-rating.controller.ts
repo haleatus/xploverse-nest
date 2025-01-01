@@ -12,6 +12,21 @@ export class UserTripRatingController {
   async create(
     @Req() req: any,
     @Param('id') trip_id: string,
+    @Body()
     dto: TripRatingDto,
-  ) {}
+  ) {
+    return await this.userTripRatingUseCaseService.createTripRating(
+      req.user._id,
+      trip_id,
+      dto,
+    );
+  }
+
+  @Patch('/update/:id')
+  async update(trip_id: string, @Body() dto: TripRatingDto) {
+    return await this.userTripRatingUseCaseService.updateTripRating(
+      trip_id,
+      dto,
+    );
+  }
 }
