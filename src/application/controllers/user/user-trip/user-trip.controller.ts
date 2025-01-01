@@ -26,8 +26,8 @@ export class UserTripController {
   // todo :: fix this functinality
   @Get('/my-completed-trips')
   async myCompletedTrips(@Req() req: any) {
-    await this.userTripUseCaseService.findTripByUserCarpoolRequests(
-      req.user_id,
+    return await this.userTripUseCaseService.findTripByUserCarpoolRequests(
+      req.user._id,
     );
   }
 

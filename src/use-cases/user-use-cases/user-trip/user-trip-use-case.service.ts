@@ -24,8 +24,6 @@ export class UserTripUseCaseService {
       where: { requester: user_id },
     });
 
-    console.log(carpoolRequests);
-
     const userTrips = await Promise.all(
       carpoolRequests.map(async (carpoolRequest) => {
         return await this.tripRepository.findOneBy({
