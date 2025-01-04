@@ -3,7 +3,7 @@ import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
-import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
+import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 
 @Injectable()

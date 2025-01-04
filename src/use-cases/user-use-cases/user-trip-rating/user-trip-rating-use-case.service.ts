@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
-import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
+import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { TripRatingDto } from 'src/core/dtos/request/trip-rating.dto';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';

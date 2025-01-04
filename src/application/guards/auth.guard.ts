@@ -10,7 +10,7 @@ import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from 'src/application/decorators/public.decorator';
 import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
 import { Request } from 'express';
-import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
+import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { Repository } from 'typeorm';
 import { AdminEntity } from 'src/data-services/mgdb/entities/admin.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';

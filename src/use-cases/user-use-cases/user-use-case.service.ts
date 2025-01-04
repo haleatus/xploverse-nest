@@ -10,7 +10,7 @@ import { ObjectId } from 'mongodb';
 import { UserSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 import { EditUserDto } from 'src/core/dtos/request/signup.dto';
-import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
+import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 
 @Injectable()
 export class UserUseCaseService {

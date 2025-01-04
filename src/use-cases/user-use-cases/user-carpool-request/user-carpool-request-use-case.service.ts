@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
-import { convertToObjectId } from 'src/common/utils/convert-to-object-id';
+import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import {
   CreateCarPoolRequestDto,
   EditCarPoolRequestDto,
