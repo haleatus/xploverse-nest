@@ -8,7 +8,7 @@ export class UserTripRatingController {
     private userTripRatingUseCaseService: UserTripRatingUseCaseService,
   ) {}
 
-  @Post('/create/:id')
+  @Post('/create/trip/:id')
   async create(
     @Req() req: any,
     @Param('id') trip_id: string,
@@ -23,9 +23,12 @@ export class UserTripRatingController {
   }
 
   @Patch('/update/:id')
-  async update(@Param('id') trip_id: string, @Body() dto: TripRatingDto) {
+  async update(
+    @Param('id') trip_rating_id: string,
+    @Body() dto: TripRatingDto,
+  ) {
     return await this.userTripRatingUseCaseService.updateTripRating(
-      trip_id,
+      trip_rating_id,
       dto,
     );
   }

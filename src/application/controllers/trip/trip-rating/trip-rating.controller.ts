@@ -12,6 +12,8 @@ export class TripRatingController {
 
   @Get('/get/:id')
   async get(@Param('id') trip_rating_id: string) {
-    return;
+    return await this.tripRatingUseCaseService.findTripRatingById(
+      trip_rating_id,
+    );
   }
 }
