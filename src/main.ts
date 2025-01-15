@@ -14,7 +14,11 @@ async function bootstrap() {
 
   // -- Cors setup
   app.enableCors({
-    origin: ['*', 'http://localhost:3001'],
+    origin: [
+      '*',
+      'http://localhost:3001',
+      'https://xploverse-webapp.vercel.app',
+    ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
