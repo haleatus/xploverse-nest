@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
@@ -12,6 +11,7 @@ import {
   CreateCarPoolRequestDto,
   EditCarPoolRequestDto,
 } from 'src/core/dtos/request/carpool-request.dto';
+import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { Repository } from 'typeorm';
@@ -36,7 +36,7 @@ export class UserCarPoolRequestUseCaseService {
       _id: convertToObjectId(trip_id),
     });
     if (!trip)
-      throw new NotFoundException(
+      throw new AppNotFoundException(
         'Carpool request by this trip does not exist',
       );
 
@@ -55,7 +55,7 @@ export class UserCarPoolRequestUseCaseService {
       _id: convertToObjectId(carpool_request_id),
     });
     if (!carpoolRequest)
-      throw new NotFoundException('Carpool request does not exist');
+      throw new AppNotFoundException('Carpool request does not exist');
 
     const updatedCarPoolRequest = {
       ...carpoolRequest,
@@ -79,14 +79,14 @@ export class UserCarPoolRequestUseCaseService {
       _id: convertToObjectId(trip_id),
     });
 
-    if (!trip) throw new NotFoundException('trip does not exist');
+    if (!trip) throw new AppNotFoundException('trip does not exist');
 
     const carpoolRequest = await this.carPoolRequestRepository.findOne({
       where: { trip: trip._id },
     });
 
     if (!carpoolRequest)
-      throw new NotFoundException('Carpool request does not exist');
+      throw new AppNotFoundException('Carpool request does not exist');
 
     const updatedCarPoolRequest = {
       ...carpoolRequest,
@@ -111,7 +111,7 @@ export class UserCarPoolRequestUseCaseService {
     });
 
     if (!carpoolRequest)
-      throw new NotFoundException(
+      throw new AppNotFoundException(
         'No carpool request has been made by this user',
       );
 
@@ -126,7 +126,7 @@ export class UserCarPoolRequestUseCaseService {
       _id: convertToObjectId(dto.trip),
     });
 
-    if (!trip) throw new NotFoundException('Trip to request does not exist');
+    if (!trip) throw new AppNotFoundException('Trip to request does not exist');
 
     const requester = await this.userRepository.findOneBy({
       _id: requester_id,
@@ -160,7 +160,7 @@ export class UserCarPoolRequestUseCaseService {
       _id: convertToObjectId(carpool_request_id),
     });
     if (!carpoolRequest) {
-      throw new NotFoundException('Carpool request does not exist');
+      throw new AppNotFoundException('Carpool request does not exist');
     }
     const updatedCarPoolRequest = { ...carpoolRequest, ...dto };
     await this.carPoolRequestRepository.update(

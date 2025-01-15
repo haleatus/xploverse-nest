@@ -1,9 +1,5 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { SignInDto } from 'src/core/dtos/request/signin.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
@@ -25,7 +21,7 @@ export class UserAuthUseCaseService {
       where: { username: dto.username },
     });
 
-    if (!user) throw new NotFoundException('user does not exist.');
+    if (!user) throw new AppNotFoundException('user does not exist.');
 
     const isPasswordMatched = await this.bcryptService.compare(
       dto.password,

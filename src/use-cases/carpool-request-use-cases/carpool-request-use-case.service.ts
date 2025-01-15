@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
+import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 
 @Injectable()
 export class CarPoolRequestUseCaseService {
@@ -22,7 +23,7 @@ export class CarPoolRequestUseCaseService {
       _id: carpool_request_id,
     });
     if (!carpool_request) {
-      throw new NotFoundException('Carpool request not found');
+      throw new AppNotFoundException('Carpool request not found');
     }
     return carpool_request;
   }
