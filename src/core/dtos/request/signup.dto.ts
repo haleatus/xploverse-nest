@@ -18,8 +18,6 @@ export class AdminSignUpDto extends SignUpDto {}
 export class UserSignUpDto extends SignUpDto {
   @IsNotEmpty()
   phone_number: string;
-
-  is_operator?: boolean;
 }
 
 export class EditUserDto {
