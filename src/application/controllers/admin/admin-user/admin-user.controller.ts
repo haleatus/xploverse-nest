@@ -6,10 +6,17 @@ import { AdminUserUseCaseService } from 'src/use-cases/admin-use-cases/admin-use
 export class AdminUserController {
   constructor(private adminUserUseCaseService: AdminUserUseCaseService) {}
 
-  @Get('get-all')
-  async getAllUsers() {
+  @Get('/get-all')
+  async getAlNonOperatorlUsers() {
     return CoreApiResponse.success(
-      await this.adminUserUseCaseService.findAllUser(),
+      await this.adminUserUseCaseService.findAllNonOperatorUser(),
+    );
+  }
+
+  @Get('/operator/get-all')
+  async getAllOperatorUsers() {
+    return CoreApiResponse.success(
+      await this.adminUserUseCaseService.findAllOperatorUser(),
     );
   }
 

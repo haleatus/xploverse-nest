@@ -17,8 +17,17 @@ export class AdminUserUseCaseService {
     private tripRepository: Repository<TripEntity>,
   ) {}
 
-  async findAllUser() {
-    const users = await this.userRepository.find();
+  async findAllOperatorUser() {
+    const users = await this.userRepository.find({
+      where: { is_operator: true },
+    });
+    return users;
+  }
+
+  async findAllNonOperatorUser() {
+    const users = await this.userRepository.find({
+      where: { is_operator: false },
+    });
     return users;
   }
 
