@@ -16,11 +16,6 @@ export class UserController {
     );
   }
 
-  @Get('/get-all')
-  async getAll() {
-    return CoreApiResponse.success(await this.userUsecaseService.findAllUser());
-  }
-
   @Get('/me')
   async getMe(@Req() req: any) {
     return CoreApiResponse.success(req.user);

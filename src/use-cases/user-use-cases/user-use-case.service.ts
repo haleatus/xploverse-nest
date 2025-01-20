@@ -33,11 +33,6 @@ export class UserUseCaseService {
     return await this.userRepository.save(newUser);
   }
 
-  async findAllUser() {
-    const users = await this.userRepository.find();
-    return users;
-  }
-
   async findUserByUsername(username: string) {
     const user = await this.userRepository.findOneBy({
       username: username,
