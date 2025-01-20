@@ -34,10 +34,15 @@ export class TripUseCaseService {
 
   async findTripById(id: string) {
     const trip_id = convertToObjectId(id);
-    const trip = this.tripRepository.findOneBy({ _id: trip_id });
+    const trip = await this.tripRepository.findOneBy({ _id: trip_id });
     if (!trip) {
       throw new AppNotFoundException('Trip does not exist');
     }
-    return trip;
+    const planner = await this.userRepository.findOne({
+      where: { _id: trip.planner },
+      select: ['username', 'email', 'phone_number'],
+    });
+
+    return { ...trip, planner };
   }
 }
