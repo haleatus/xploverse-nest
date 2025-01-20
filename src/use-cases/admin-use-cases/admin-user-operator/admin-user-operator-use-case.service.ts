@@ -41,7 +41,7 @@ export class AdminUserOperatorUseCaseService {
       _id: convertToObjectId(operatorRequestId),
     });
 
-    if (!request) throw new AppNotFoundException('Ther request does not exist');
+    if (!request) throw new AppNotFoundException('The request does not exist');
 
     const updatedRequest = {
       ...request,
