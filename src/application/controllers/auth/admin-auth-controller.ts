@@ -10,7 +10,7 @@ export class AdminAuthController {
   @Post('/signin')
   async adminSignIn(@Body() dto: SignInDto) {
     return CoreApiResponse.success(
-      this.adminAuthUsecaseService.signIn(dto),
+      await this.adminAuthUsecaseService.signIn(dto),
       200,
       'admin signin success',
     );
