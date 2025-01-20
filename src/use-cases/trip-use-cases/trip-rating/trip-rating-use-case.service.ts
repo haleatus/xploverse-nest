@@ -31,17 +31,31 @@ export class TripRatingUseCaseService {
       where: { trip: trip._id },
     });
 
-    return tripRatings;
+    return await Promise.all(
+      tripRatings.map(async (tripRating) => {
+        const rater = await this.userRepository.findOne({
+          where: { _id: tripRating.rater },
+          select: ['username', 'email', 'phone_number'],
+        });
+
+        return { ...tripRating, rater };
+      }),
+    );
   }
 
   async findTripRatingById(trip_rating_id: string) {
-    const trip_rating = await this.tripRatingRepository.findOneBy({
+    const tripRating = await this.tripRatingRepository.findOneBy({
       _id: convertToObjectId(trip_rating_id),
     });
 
-    if (!trip_rating)
+    if (!tripRating)
       throw new AppNotFoundException('trip rating does not exist');
 
-    return trip_rating;
+    const rater = await this.userRepository.findOne({
+      where: { _id: tripRating.rater },
+      select: ['username', 'email', 'phone_number'],
+    });
+
+    return { ...tripRating, rater };
   }
 }
