@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -11,6 +7,7 @@ import { UserSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 import { EditUserDto } from 'src/core/dtos/request/signup.dto';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
+import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 
 @Injectable()
 export class UserUseCaseService {
@@ -30,15 +27,10 @@ export class UserUseCaseService {
     }
 
     const newUser = this.userRepository.create(dto);
-    newUser.is_operator = dto.is_operator ? dto.is_operator : false;
+    newUser.is_operator = false;
     newUser.password = await this.bcryptService.hash(dto.password);
 
     return await this.userRepository.save(newUser);
-  }
-
-  async findAllUser() {
-    const users = await this.userRepository.find();
-    return users;
   }
 
   async findUserByUsername(username: string) {
@@ -46,7 +38,7 @@ export class UserUseCaseService {
       username: username,
     });
     if (!user) {
-      throw new NotFoundException('user does not exist');
+      throw new AppNotFoundException('user does not exist');
     }
     return user;
   }
@@ -56,7 +48,7 @@ export class UserUseCaseService {
       _id: convertToObjectId(id),
     });
     if (!user) {
-      throw new NotFoundException('user does not exist');
+      throw new AppNotFoundException('user does not exist');
     }
     return user;
   }

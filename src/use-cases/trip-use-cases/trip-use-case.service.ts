@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-
+import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 
@@ -34,10 +34,15 @@ export class TripUseCaseService {
 
   async findTripById(id: string) {
     const trip_id = convertToObjectId(id);
-    const trip = this.tripRepository.findOneBy({ _id: trip_id });
+    const trip = await this.tripRepository.findOneBy({ _id: trip_id });
     if (!trip) {
-      throw new NotFoundException('Trip does not exist');
+      throw new AppNotFoundException('Trip does not exist');
     }
-    return trip;
+    const planner = await this.userRepository.findOne({
+      where: { _id: trip.planner },
+      select: ['username', 'email', 'phone_number'],
+    });
+
+    return { ...trip, planner };
   }
 }

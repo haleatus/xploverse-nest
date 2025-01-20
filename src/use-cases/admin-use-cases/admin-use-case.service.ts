@@ -1,14 +1,11 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdminEntity } from 'src/data-services/mgdb/entities/admin.entity';
 import { Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 import { AdminSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
+import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 
 @Injectable()
 export class AdminUseCaseService {
@@ -43,7 +40,7 @@ export class AdminUseCaseService {
       username: username,
     });
     if (!admin) {
-      throw new NotFoundException('admin does not exist');
+      throw new AppNotFoundException('admin does not exist');
     }
     return admin;
   }
@@ -53,7 +50,7 @@ export class AdminUseCaseService {
       _id: id,
     });
     if (!admin) {
-      throw new NotFoundException('admin does not exist');
+      throw new AppNotFoundException('admin does not exist');
     }
     return admin;
   }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
@@ -7,6 +7,7 @@ import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.en
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { Repository } from 'typeorm';
+import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 
 @Injectable()
 export class UserTripRatingUseCaseService {
@@ -32,7 +33,7 @@ export class UserTripRatingUseCaseService {
       _id: convertToObjectId(trip_id),
     });
 
-    if (!trip) throw new NotFoundException('Trip does not exist');
+    if (!trip) throw new AppNotFoundException('Trip does not exist');
 
     const tripRating = this.tripRatingRepository.create({
       ...dto,
@@ -48,7 +49,8 @@ export class UserTripRatingUseCaseService {
       _id: convertToObjectId(trip_rating_id),
     });
 
-    if (!tripRating) throw new NotFoundException('trip rating does not exist');
+    if (!tripRating)
+      throw new AppNotFoundException('trip rating does not exist');
 
     const updatedTripRating = { ...tripRating, ...dto };
     await this.tripRatingRepository.update(

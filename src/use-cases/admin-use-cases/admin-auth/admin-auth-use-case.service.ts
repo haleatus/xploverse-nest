@@ -1,10 +1,6 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { SignInDto } from 'src/core/dtos/request/signin.dto';
 import { AdminEntity } from 'src/data-services/mgdb/entities/admin.entity';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
@@ -25,7 +21,7 @@ export class AdminAuthUseCaseService {
       where: { username: dto.username },
     });
 
-    if (!admin) throw new NotFoundException('admin does not exist.');
+    if (!admin) throw new AppNotFoundException('admin does not exist.');
 
     const isPasswordMatched = await this.bcryptService.compare(
       dto.password,

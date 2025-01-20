@@ -4,7 +4,6 @@ import {
   ExecutionContext,
   UnauthorizedException,
   Logger,
-  NotFoundException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from 'src/application/decorators/public.decorator';
@@ -15,6 +14,7 @@ import { Repository } from 'typeorm';
 import { AdminEntity } from 'src/data-services/mgdb/entities/admin.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import AppNotFoundException from '../exception/app-not-found.exception';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -68,7 +68,7 @@ export class AuthGuard implements CanActivate {
           _id: convertToObjectId(decoded._id),
         });
 
-        if (!admin) throw new NotFoundException('admin does not exist');
+        if (!admin) throw new AppNotFoundException('admin does not exist');
 
         request.admin = admin;
       } else if (isUser) {
@@ -76,7 +76,7 @@ export class AuthGuard implements CanActivate {
           _id: convertToObjectId(decoded._id),
         });
 
-        if (!user) throw new NotFoundException('user does not exist');
+        if (!user) throw new AppNotFoundException('user does not exist');
 
         request.user = user;
       }

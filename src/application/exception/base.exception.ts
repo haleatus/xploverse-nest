@@ -1,6 +1,6 @@
 import { HttpException as Exception } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
-import { ResponseDto } from 'src/common/types/response';
+import { ResponseDto } from 'src/common/type/response';
 import { formatErrorMessage } from 'src/common/utils/errorFormater.utils';
 
 const reduceErrors = (errors: ValidationError[]): object => {
