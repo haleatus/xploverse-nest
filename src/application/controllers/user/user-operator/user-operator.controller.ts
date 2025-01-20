@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import { Controller, Post, Req } from '@nestjs/common';
 import { CoreApiResponse } from 'src/application/api/core-api-response';
 import { UserOperatorUseCaseService } from 'src/use-cases/user-use-cases/user-operator/user-operator-use-case.service';
 
