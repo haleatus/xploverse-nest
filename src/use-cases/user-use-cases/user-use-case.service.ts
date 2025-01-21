@@ -26,6 +26,8 @@ export class UserUseCaseService {
       throw new ConflictException('user already exists.');
     }
 
+    // TODO; add validation for email and phonenumber -- if they are unique or not
+
     const newUser = this.userRepository.create(dto);
     newUser.is_operator = false;
     newUser.password = await this.bcryptService.hash(dto.password);
