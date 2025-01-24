@@ -26,8 +26,8 @@ export class UserTripController {
     );
   }
 
-  @Get('/my-completed-trips')
-  async myCompletedTrips(@Req() req: any) {
+  @Get('/my-trips')
+  async myTrips(@Req() req: any) {
     return CoreApiResponse.success(
       await this.userTripUseCaseService.findTripByUserCarpoolRequests(
         req.user._id,
