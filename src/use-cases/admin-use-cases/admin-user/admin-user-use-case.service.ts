@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
+import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
+import { UserOperatorRequestEntity } from 'src/data-services/mgdb/entities/user-operator-request.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { Repository } from 'typeorm';
 
@@ -15,6 +17,12 @@ export class AdminUserUseCaseService {
 
     @InjectRepository(TripEntity)
     private tripRepository: Repository<TripEntity>,
+
+    @InjectRepository(CarPoolRequestEntity)
+    private carPoolRequestRepository: Repository<CarPoolRequestEntity>,
+
+    @InjectRepository(UserOperatorRequestEntity)
+    private userOperatorRequestRepository: Repository<UserOperatorRequestEntity>,
   ) {}
 
   async findAllOperatorUser() {
@@ -50,10 +58,33 @@ export class AdminUserUseCaseService {
       }
     }
 
+    let deletedCarpoolRequest = null;
+
+    const carpoolRequest = await this.carPoolRequestRepository.findOne({
+      where: { requester: deletedUser._id },
+    });
+
+    if (carpoolRequest) {
+      deletedCarpoolRequest = carpoolRequest;
+      await this.carPoolRequestRepository.delete({ _id: carpoolRequest._id });
+    }
+
+    let deletedUserOperatorRequest = null;
+
+    const userOperatorRequest =
+      await this.userOperatorRequestRepository.findOne({
+        where: { requester: deletedUser._id },
+      });
+
+    if (userOperatorRequest) {
+      deletedUserOperatorRequest = userOperatorRequest;
+      await this.userOperatorRequestRepository.delete({
+        _id: userOperatorRequest._id,
+      });
+    }
+
     await this.userRepository.delete({ _id: deletedUser._id });
 
-    return deletedTrip
-      ? { deletedUser: deletedUser, deletedTrip: deletedTrip }
-      : { deletedUser: deletedUser };
+    return deletedUser;
   }
 }
