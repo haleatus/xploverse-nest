@@ -1,6 +1,7 @@
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { ObjectId } from 'mongodb';
+import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 
 // toBeFixed :: all entities need to be fixed for mongodb specific
 
@@ -42,6 +43,9 @@ export class TripEntity extends BaseEntity {
     latitude: string;
     longitude: string;
   };
+
+  @Column()
+  trip_status: TripStatusEnum;
 
   @Column()
   is_car_pool: boolean;
