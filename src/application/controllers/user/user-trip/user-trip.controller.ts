@@ -26,7 +26,6 @@ export class UserTripController {
     );
   }
 
-  // todo :: fix this functinality
   @Get('/my-completed-trips')
   async myCompletedTrips(@Req() req: any) {
     return CoreApiResponse.success(
