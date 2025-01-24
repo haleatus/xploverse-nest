@@ -8,6 +8,7 @@ import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { ObjectId } from 'mongodb';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
+import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 
 @Injectable()
 export class UserTripUseCaseService {
@@ -59,6 +60,7 @@ export class UserTripUseCaseService {
     const newTrip = this.tripRepository.create({
       ...dto,
       planner: planner._id,
+      trip_status: TripStatusEnum.UPCOMING,
       is_car_pool: dto.is_car_pool ?? false,
     });
     return await this.tripRepository.save(newTrip);
