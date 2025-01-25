@@ -25,6 +25,9 @@ export class UserOperatorUseCaseService {
 
     if (!user) throw new AppNotFoundException('User does not exist');
 
+    if (user.is_operator === true)
+      throw new AppException({}, 'you are already an operator', 409);
+
     const existingRequest = await this.userOperatorRequestRepository.findOne({
       where: {
         requester: user._id,

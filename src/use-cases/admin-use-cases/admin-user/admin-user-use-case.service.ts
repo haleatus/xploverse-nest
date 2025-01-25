@@ -40,50 +40,39 @@ export class AdminUserUseCaseService {
   }
 
   async deleteUser(userId: string) {
-    const deletedUser = await this.userRepository.findOneBy({
-      _id: convertToObjectId(userId),
-    });
+    const userObjectId = convertToObjectId(userId);
 
+    // Fetch the user details
+    const deletedUser = await this.userRepository.findOneBy({
+      _id: userObjectId,
+    });
     if (!deletedUser) throw new AppNotFoundException('user does not exist');
 
-    let deletedTrip = null;
+    // Initialize promises array
+    const deletePromises: Promise<any>[] = [];
 
-    if (deletedUser.is_operator === true) {
-      const trip = await this.tripRepository.findOne({
-        where: { planner: deletedUser._id },
-      });
-      if (trip) {
-        deletedTrip = trip;
-        await this.tripRepository.delete({ _id: trip._id });
-      }
+    // Handle trip deletion if the user is an operator
+    if (deletedUser.is_operator) {
+      deletePromises.push(
+        this.tripRepository.delete({ planner: userObjectId }),
+      );
     }
 
-    let deletedCarpoolRequest = null;
+    // Handle carpool request deletion
+    deletePromises.push(
+      this.carPoolRequestRepository.delete({ requester: userObjectId }),
+    );
 
-    const carpoolRequest = await this.carPoolRequestRepository.findOne({
-      where: { requester: deletedUser._id },
-    });
+    // Handle user operator request deletion
+    deletePromises.push(
+      this.userOperatorRequestRepository.delete({ requester: userObjectId }),
+    );
 
-    if (carpoolRequest) {
-      deletedCarpoolRequest = carpoolRequest;
-      await this.carPoolRequestRepository.delete({ _id: carpoolRequest._id });
-    }
+    // Add user deletion to promises
+    deletePromises.push(this.userRepository.delete({ _id: userObjectId }));
 
-    let deletedUserOperatorRequest = null;
-
-    const userOperatorRequest =
-      await this.userOperatorRequestRepository.findOne({
-        where: { requester: deletedUser._id },
-      });
-
-    if (userOperatorRequest) {
-      deletedUserOperatorRequest = userOperatorRequest;
-      await this.userOperatorRequestRepository.delete({
-        _id: userOperatorRequest._id,
-      });
-    }
-
-    await this.userRepository.delete({ _id: deletedUser._id });
+    // Wait for all deletions to complete
+    await Promise.all(deletePromises);
 
     return deletedUser;
   }
