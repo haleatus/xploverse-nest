@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 import { UserSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
-import { EditUserDto } from 'src/core/dtos/request/signup.dto';
+import { EditUserDto } from 'src/core/dtos/request/user.dto';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 

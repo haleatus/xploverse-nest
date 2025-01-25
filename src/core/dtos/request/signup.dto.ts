@@ -19,12 +19,3 @@ export class UserSignUpDto extends SignUpDto {
   @IsNotEmpty()
   phone_number: string;
 }
-
-export class EditUserDto {
-  username?: string;
-  fullname?: string;
-  @IsEmail()
-  email?: string;
-  profile_picture?: ObjectId;
-  phone_number?: string;
-}
