@@ -1,5 +1,5 @@
 import { Controller, Body, Post } from '@nestjs/common';
-
+import { CoreApiResponse } from 'src/application/api/core-api-response';
 import { SignInDto } from 'src/core/dtos/request/signin.dto';
 import { UserAuthUseCaseService } from 'src/use-cases/user-use-cases/user-auth/user-auth-use-case.service';
 
@@ -9,6 +9,10 @@ export class UserAuthController {
 
   @Post('/signin')
   async adminSignIn(@Body() dto: SignInDto) {
-    return this.userAuthUsecaseService.signIn(dto);
+    return CoreApiResponse.success(
+      await this.userAuthUsecaseService.signIn(dto),
+      201,
+      'user signin success',
+    );
   }
 }

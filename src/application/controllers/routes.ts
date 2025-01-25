@@ -4,6 +4,7 @@ import { AdminControllerModule } from './admin/admin-controller.module';
 import { UserControllerModule } from './user/user-controller.module';
 import { TripControllerModule } from './trip/trip-controller.module';
 import { CarPoolRequestControllerModule } from './carpool-request/carpool-request.controller.module';
+import { FileStoreControllerModule } from './file-store/file-store-controller.module';
 
 const routes: Routes = [
   {
@@ -28,6 +29,10 @@ const routes: Routes = [
       {
         path: '/carpool-request',
         children: [CarPoolRequestControllerModule],
+      },
+      {
+        path: '/file',
+        children: [FileStoreControllerModule],
       },
     ],
   },

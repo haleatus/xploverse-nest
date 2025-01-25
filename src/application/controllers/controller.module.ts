@@ -4,6 +4,7 @@ import { AdminControllerModule } from './admin/admin-controller.module';
 import { UserControllerModule } from './user/user-controller.module';
 import { TripControllerModule } from './trip/trip-controller.module';
 import { CarPoolRequestControllerModule } from './carpool-request/carpool-request.controller.module';
+import { FileStoreControllerModule } from './file-store/file-store-controller.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CarPoolRequestControllerModule } from './carpool-request/carpool-reques
     UserControllerModule,
     TripControllerModule,
     CarPoolRequestControllerModule,
+    FileStoreControllerModule,
   ],
   exports: [
     AuthControllerModule,
@@ -19,6 +21,7 @@ import { CarPoolRequestControllerModule } from './carpool-request/carpool-reques
     UserControllerModule,
     TripControllerModule,
     CarPoolRequestControllerModule,
+    FileStoreControllerModule,
   ],
 })
 export class ControllerModule {}

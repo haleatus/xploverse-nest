@@ -4,6 +4,7 @@ import { UserController } from './user.controller';
 import { UserTripController } from './user-trip/user-trip.controller';
 import { UserCarPoolRequestController } from './user-carpool-request/user-carpool-request.controller';
 import { UserTripRatingController } from './user-trip-rating/user-trip-rating.controller';
+import { UserOperatorController } from './user-operator/user-operator.controller';
 
 @Module({
   imports: [UserUseCaseModule],
@@ -12,6 +13,7 @@ import { UserTripRatingController } from './user-trip-rating/user-trip-rating.co
     UserTripController,
     UserCarPoolRequestController,
     UserTripRatingController,
+    UserOperatorController,
   ],
 })
 export class UserControllerModule {}

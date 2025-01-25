@@ -1,12 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { ObjectId } from 'mongodb';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
+import AppNotFoundException from 'src/application/exception/app-not-found.exception';
+import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 
 @Injectable()
 export class UserTripUseCaseService {
@@ -58,6 +60,7 @@ export class UserTripUseCaseService {
     const newTrip = this.tripRepository.create({
       ...dto,
       planner: planner._id,
+      trip_status: TripStatusEnum.UPCOMING,
       is_car_pool: dto.is_car_pool ?? false,
     });
     return await this.tripRepository.save(newTrip);
@@ -68,7 +71,7 @@ export class UserTripUseCaseService {
       _id: convertToObjectId(trip_id),
     });
     if (!trip) {
-      throw new NotFoundException('Trip does not exist');
+      throw new AppNotFoundException('Trip does not exist');
     }
     const updatedTrip = { ...trip, ...dto };
     await this.tripRepository.update({ _id: trip._id }, updatedTrip);
@@ -80,7 +83,7 @@ export class UserTripUseCaseService {
       _id: convertToObjectId(trip_id),
     });
 
-    if (!deletedTrip) throw new NotFoundException('trip not found');
+    if (!deletedTrip) throw new AppNotFoundException('trip not found');
 
     await this.tripRepository.delete({ _id: deletedTrip._id });
     return deletedTrip;
