@@ -46,7 +46,7 @@ export class UserTripUseCaseService {
       where: { planner: planner._id },
     });
 
-    return trips;
+    return { trips: { ...trips, planner } };
   }
 
   async createTrip(
