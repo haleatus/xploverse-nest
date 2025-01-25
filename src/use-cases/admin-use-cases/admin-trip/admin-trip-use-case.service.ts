@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
+import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 
 @Injectable()
 export class AdminTripUseCaseService {
@@ -14,35 +15,37 @@ export class AdminTripUseCaseService {
 
     @InjectRepository(TripRatingEntity)
     private tripRatingRepository: Repository<TripRatingEntity>,
+
+    @InjectRepository(CarPoolRequestEntity)
+    private carpoolRequestRepository: Repository<CarPoolRequestEntity>,
   ) {}
 
   async deleteTripById(tripId: string) {
+    const tripObjectId = convertToObjectId(tripId);
+
+    // Fetch the trip details
     const deletedTrip = await this.tripRepository.findOneBy({
-      _id: convertToObjectId(tripId),
+      _id: tripObjectId,
     });
     if (!deletedTrip) {
       throw new AppNotFoundException('Trip does not exist');
     }
 
-    let deletedTripRatings = null;
+    // Use Promise.all to execute deletions in parallel
+    const deletePromises: Promise<any>[] = [
+      // Delete trip ratings associated with the trip
+      this.tripRatingRepository.delete({ trip: tripObjectId }),
 
-    const tripRatings = await this.tripRatingRepository.find({
-      where: { trip: deletedTrip._id },
-    });
+      // Delete carpool requests associated with the trip
+      this.carpoolRequestRepository.delete({ trip: tripObjectId }),
 
-    if (tripRatings && tripRatings.length !== 0) {
-      deletedTripRatings = tripRatings;
-      await Promise.all(
-        tripRatings.map(async (tripRating) => {
-          await this.tripRatingRepository.delete({ _id: tripRating._id });
-        }),
-      );
-    }
+      // Delete the trip itself
+      this.tripRepository.delete({ _id: tripObjectId }),
+    ];
 
-    await this.tripRepository.delete({ _id: deletedTrip._id });
+    // Wait for all deletions to complete
+    await Promise.all(deletePromises);
 
-    return deletedTripRatings
-      ? { deletedTrip: deletedTrip, deletedTripRatings: deletedTripRatings }
-      : { deletedTrip: deletedTrip };
+    return deletedTrip;
   }
 }
