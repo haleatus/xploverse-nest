@@ -9,6 +9,7 @@ import { ObjectId } from 'mongodb';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
+import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
 
 @Injectable()
 export class UserTripUseCaseService {
@@ -19,7 +20,20 @@ export class UserTripUseCaseService {
     private userRepository: Repository<UserEntity>,
     @InjectRepository(CarPoolRequestEntity)
     private carPoolRequestRepository: Repository<CarPoolRequestEntity>,
+    @InjectRepository(TripRatingEntity)
+    private tripRatingRepository: Repository<TripRatingEntity>,
   ) {}
+
+  async calculateAverateRatings(tripRatings: TripRatingEntity[]) {
+    let count = 0;
+    tripRatings.map((tripRating) => {
+      count = count + tripRating.ratings;
+    });
+
+    const averageRatings = count / tripRatings.length;
+
+    return !Number.isNaN(averageRatings) ? averageRatings : 0;
+  }
 
   async findTripByUserCarpoolRequests(user_id: ObjectId) {
     const carpoolRequests = await this.carPoolRequestRepository.find({
@@ -34,7 +48,21 @@ export class UserTripUseCaseService {
       }),
     );
 
-    return userTrips;
+    return await Promise.all(
+      userTrips.map(async (userTrip) => {
+        const planner = await this.userRepository.findOneBy({
+          _id: userTrip.planner,
+        });
+
+        const tripRatings = await this.tripRatingRepository.find({
+          where: { trip: userTrip._id },
+        });
+
+        const averageRatings = await this.calculateAverateRatings(tripRatings);
+
+        return { ...userTrip, planner, averageRatings };
+      }),
+    );
   }
 
   async findTripsByPlanner(planner_id: ObjectId) {
@@ -51,7 +79,14 @@ export class UserTripUseCaseService {
         const planner = await this.userRepository.findOneBy({
           _id: trip.planner,
         });
-        return { ...trip, planner };
+
+        const tripRatings = await this.tripRatingRepository.find({
+          where: { trip: trip._id },
+        });
+
+        const averageRatings = await this.calculateAverateRatings(tripRatings);
+
+        return { ...trip, planner, averageRatings };
       }),
     );
   }
