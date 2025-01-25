@@ -30,6 +30,13 @@ export class UserController {
     );
   }
 
+  @Get('/get-profile-picture')
+  async getMyProfilePicture(@Req() req: any) {
+    return CoreApiResponse.success(
+      await this.userUsecaseService.getProfilePicture(req.user._id),
+    );
+  }
+
   @Public()
   @Get('/get-by-username/:username')
   async getByUserName(@Param('username') username: string) {
