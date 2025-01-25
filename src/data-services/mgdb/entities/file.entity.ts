@@ -4,6 +4,9 @@ import { BaseEntity } from './base.entity';
 @Entity('file')
 export class FileEntity extends BaseEntity {
   @Column()
+  file_id: string;
+
+  @Column()
   name: string;
 
   @Column()
@@ -11,4 +14,7 @@ export class FileEntity extends BaseEntity {
 
   @Column()
   path: string;
+
+  @Column()
+  url: string;
 }
