@@ -8,12 +8,17 @@ import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 import { EditUserDto } from 'src/core/dtos/request/user.dto';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 
 @Injectable()
 export class UserUseCaseService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+
+    @InjectRepository(FileEntity)
+    private fileRepository: Repository<FileEntity>,
+
     private bcryptService: BcryptService,
   ) {}
 
@@ -62,5 +67,21 @@ export class UserUseCaseService {
     const updatedPersonalDetail = { ...user, ...dto };
     await this.userRepository.update({ _id: user._id }, updatedPersonalDetail);
     return updatedPersonalDetail;
+  }
+
+  async getProfilePicture(id: ObjectId) {
+    const user = await this.userRepository.findOneBy({
+      _id: id,
+    });
+    if (!user.profile_picture)
+      throw new AppNotFoundException(
+        'you have not uploaded a profile picture yet',
+      );
+
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: user.profile_picture,
+    });
+
+    return profilePicture.url;
   }
 }
