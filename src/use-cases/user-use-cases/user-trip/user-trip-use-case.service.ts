@@ -46,7 +46,14 @@ export class UserTripUseCaseService {
       where: { planner: planner._id },
     });
 
-    return { trips: { ...trips, planner } };
+    return await Promise.all(
+      trips.map(async (trip) => {
+        const planner = await this.userRepository.findOneBy({
+          _id: trip.planner,
+        });
+        return { ...trip, planner };
+      }),
+    );
   }
 
   async createTrip(
