@@ -26,16 +26,14 @@ export class UserOperatorUseCaseService {
     if (!user) throw new AppNotFoundException('User does not exist');
 
     const existingRequest = await this.userOperatorRequestRepository.findOne({
-      where: { requester: user._id },
+      where: {
+        requester: user._id,
+        operator_request_status: UserOperatorRequestStatusEnum.PENDING,
+      },
     });
 
-    if (
-      existingRequest &&
-      existingRequest.operator_request_status !==
-        UserOperatorRequestStatusEnum.DECLINED
-    ) {
-      throw new AppException('you must wait before you request is declined');
-    }
+    if (existingRequest)
+      throw new AppException('you must wait before your request is declined');
 
     const newRequest = this.userOperatorRequestRepository.create({
       requester: userId,

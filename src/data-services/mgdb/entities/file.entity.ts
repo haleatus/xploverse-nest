@@ -1,7 +1,7 @@
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './base.entity';
 
-@Entity('file')
+@Entity('files')
 export class FileEntity extends BaseEntity {
   @Column()
   file_id: string;
