@@ -15,6 +15,7 @@ import { AdminEntity } from 'src/data-services/mgdb/entities/admin.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import AppNotFoundException from '../exception/app-not-found.exception';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -27,6 +28,9 @@ export class AuthGuard implements CanActivate {
 
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+
+    @InjectRepository(FileEntity)
+    private fileRepository: Repository<FileEntity>,
   ) {}
 
   private extractToken(request: Request): string | undefined {
@@ -72,13 +76,17 @@ export class AuthGuard implements CanActivate {
 
         request.admin = admin;
       } else if (isUser) {
-        const user = await this.userRepository.findOneBy({
-          _id: convertToObjectId(decoded._id),
+        const user = await this.userRepository.findOne({
+          where: { _id: convertToObjectId(decoded._id) },
+          select: ['username', 'email', 'is_operator', 'phone_number'],
         });
 
         if (!user) throw new AppNotFoundException('user does not exist');
 
-        request.user = user;
+        const profilePicture = await this.fileRepository.findOne({
+          where: { _id: user.profile_picture },
+        });
+        request.user = { ...user, profile_picture: profilePicture };
       }
     } catch (error) {
       Logger.error(error.message);
