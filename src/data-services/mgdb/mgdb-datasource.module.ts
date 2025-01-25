@@ -7,6 +7,7 @@ import { TripEntity } from './entities/trip.entity';
 import { CarPoolRequestEntity } from './entities/carpool-request.entity';
 import { TripRatingEntity } from './entities/trip-rating.entity';
 import { UserOperatorRequestEntity } from './entities/user-operator-request.entity';
+import { FileEntity } from './entities/file.entity';
 
 @Global() // makes the module available globally for other modules once imported in the app modules
 @Module({
@@ -18,6 +19,7 @@ import { UserOperatorRequestEntity } from './entities/user-operator-request.enti
       CarPoolRequestEntity,
       TripRatingEntity,
       UserOperatorRequestEntity,
+      FileEntity,
     ]), // Register repositories
   ],
   providers: [
@@ -58,6 +60,7 @@ import { UserOperatorRequestEntity } from './entities/user-operator-request.enti
       CarPoolRequestEntity,
       TripRatingEntity,
       UserOperatorRequestEntity,
+      FileEntity,
     ]), // Export repositories here
   ],
 })
