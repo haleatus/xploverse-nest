@@ -1,4 +1,4 @@
-import { IError } from 'src/common/type/ierror';
+import { IError } from 'src/common/type/iError';
 import { BaseException } from './base.exception';
 
 export default class AppException extends BaseException {

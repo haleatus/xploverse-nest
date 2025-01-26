@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { IError } from '../type/ierror';
+import { IError } from '../type/iError';
 
 const dubplicateKey = (e: any): IError => {
   const { detail } = e;
