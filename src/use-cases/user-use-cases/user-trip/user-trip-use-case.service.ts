@@ -24,6 +24,8 @@ export class UserTripUseCaseService {
     private tripRatingRepository: Repository<TripRatingEntity>,
   ) {}
 
+  // TODO :: trip status should be seen, if trip status is ongoing then only trip rating is available
+
   async calculateAverateRatings(tripRatings: TripRatingEntity[]) {
     let count = 0;
     tripRatings.map((tripRating) => {
