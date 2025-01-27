@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Retrieve the PORT from ConfigService (defaults to 3000 if not set)
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 5000;
 
   // prefix
   app.setGlobalPrefix('api');
