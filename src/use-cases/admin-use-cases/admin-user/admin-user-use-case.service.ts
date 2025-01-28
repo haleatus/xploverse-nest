@@ -100,13 +100,13 @@ export class AdminUserUseCaseService {
       this.userOperatorRequestRepository.delete({ requester: userObjectId }),
     );
 
-    // Add user deletion to promises
-    deletePromises.push(this.userRepository.delete({ _id: userObjectId }));
-
     // user files
     deletePromises.push(
       this.fileRepository.delete({ _id: deletedUser.profile_picture }),
     );
+
+    // Add user deletion to promises
+    deletePromises.push(this.userRepository.delete({ _id: userObjectId }));
 
     // Wait for all deletions to complete
     await Promise.all(deletePromises);
