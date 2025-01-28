@@ -1,5 +1,5 @@
 import { IsEmail, IsOptional } from 'class-validator';
-import { ObjectId } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 export class EditUserDto {
   username?: string;
@@ -7,6 +7,6 @@ export class EditUserDto {
   @IsOptional()
   @IsEmail()
   email: string;
-  profile_picture?: ObjectId;
+  profile_picture?: string;
   phone_number?: string;
 }
