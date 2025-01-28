@@ -32,15 +32,43 @@ export class AdminUserUseCaseService {
   async findAllOperatorUser() {
     const users = await this.userRepository.find({
       where: { is_operator: true },
+      select: [
+        'username',
+        'email',
+        'is_operator',
+        'phone_number',
+        'profile_picture',
+      ],
     });
-    return users;
+    return await Promise.all(
+      users.map(async (user) => {
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: user.profile_picture,
+        });
+        return { ...user, profile_picture: profilePicture };
+      }),
+    );
   }
 
   async findAllNonOperatorUser() {
     const users = await this.userRepository.find({
       where: { is_operator: false },
+      select: [
+        'username',
+        'email',
+        'is_operator',
+        'phone_number',
+        'profile_picture',
+      ],
     });
-    return users;
+    return await Promise.all(
+      users.map(async (user) => {
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: user.profile_picture,
+        });
+        return { ...user, profile_picture: profilePicture };
+      }),
+    );
   }
 
   async deleteUser(userId: string) {
