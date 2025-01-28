@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { UserOperatorRequestEntity } from 'src/data-services/mgdb/entities/user-operator-request.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
@@ -23,6 +24,9 @@ export class AdminUserUseCaseService {
 
     @InjectRepository(UserOperatorRequestEntity)
     private userOperatorRequestRepository: Repository<UserOperatorRequestEntity>,
+
+    @InjectRepository(FileEntity)
+    private fileRepository: Repository<FileEntity>,
   ) {}
 
   async findAllOperatorUser() {
@@ -70,6 +74,11 @@ export class AdminUserUseCaseService {
 
     // Add user deletion to promises
     deletePromises.push(this.userRepository.delete({ _id: userObjectId }));
+
+    // user files
+    deletePromises.push(
+      this.fileRepository.delete({ _id: deletedUser.profile_picture }),
+    );
 
     // Wait for all deletions to complete
     await Promise.all(deletePromises);
