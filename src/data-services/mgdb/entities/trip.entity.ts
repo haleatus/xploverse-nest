@@ -42,7 +42,7 @@ export class TripEntity extends BaseEntity {
     type: string;
     latitude: string;
     longitude: string;
-  };
+  }[];
 
   @Column()
   trip_status: TripStatusEnum;

@@ -64,7 +64,13 @@ export class UserUseCaseService {
     const user = await this.userRepository.findOneBy({
       _id: id,
     });
-    const updatedPersonalDetail = { ...user, ...dto };
+    const updatedPersonalDetail = {
+      ...user,
+      ...dto,
+      profile_picture: dto.profile_picture
+        ? convertToObjectId(dto.profile_picture)
+        : null,
+    };
     await this.userRepository.update({ _id: user._id }, updatedPersonalDetail);
     return updatedPersonalDetail;
   }

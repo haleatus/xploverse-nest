@@ -78,14 +78,21 @@ export class AuthGuard implements CanActivate {
       } else if (isUser) {
         const user = await this.userRepository.findOne({
           where: { _id: convertToObjectId(decoded._id) },
-          select: ['username', 'email', 'is_operator', 'phone_number'],
+          select: [
+            'username',
+            'email',
+            'is_operator',
+            'phone_number',
+            'profile_picture',
+          ],
         });
 
         if (!user) throw new AppNotFoundException('user does not exist');
 
-        const profilePicture = await this.fileRepository.findOne({
-          where: { _id: user.profile_picture },
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: user.profile_picture,
         });
+
         request.user = { ...user, profile_picture: profilePicture };
       }
     } catch (error) {

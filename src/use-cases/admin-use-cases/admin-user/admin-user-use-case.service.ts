@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { UserOperatorRequestEntity } from 'src/data-services/mgdb/entities/user-operator-request.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
@@ -23,20 +24,51 @@ export class AdminUserUseCaseService {
 
     @InjectRepository(UserOperatorRequestEntity)
     private userOperatorRequestRepository: Repository<UserOperatorRequestEntity>,
+
+    @InjectRepository(FileEntity)
+    private fileRepository: Repository<FileEntity>,
   ) {}
 
   async findAllOperatorUser() {
     const users = await this.userRepository.find({
       where: { is_operator: true },
+      select: [
+        'username',
+        'email',
+        'is_operator',
+        'phone_number',
+        'profile_picture',
+      ],
     });
-    return users;
+    return await Promise.all(
+      users.map(async (user) => {
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: user.profile_picture,
+        });
+        return { ...user, profile_picture: profilePicture };
+      }),
+    );
   }
 
   async findAllNonOperatorUser() {
     const users = await this.userRepository.find({
       where: { is_operator: false },
+      select: [
+        'username',
+        'email',
+        'is_operator',
+        'phone_number',
+        'profile_picture',
+      ],
     });
-    return users;
+    return await Promise.all(
+      users.map(async (user) => {
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: user.profile_picture,
+        });
+        return { ...user, profile_picture: profilePicture };
+      }),
+    );
   }
 
   async deleteUser(userId: string) {
@@ -70,6 +102,11 @@ export class AdminUserUseCaseService {
 
     // Add user deletion to promises
     deletePromises.push(this.userRepository.delete({ _id: userObjectId }));
+
+    // user files
+    deletePromises.push(
+      this.fileRepository.delete({ _id: deletedUser.profile_picture }),
+    );
 
     // Wait for all deletions to complete
     await Promise.all(deletePromises);
