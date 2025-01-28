@@ -47,7 +47,10 @@ export class UserUseCaseService {
     if (!user) {
       throw new AppNotFoundException('user does not exist');
     }
-    return user;
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: convertToObjectId(user.profile_picture as unknown as string),
+    });
+    return { ...user, profile_picture: profilePicture };
   }
 
   async findUserById(id: string) {
@@ -57,7 +60,10 @@ export class UserUseCaseService {
     if (!user) {
       throw new AppNotFoundException('user does not exist');
     }
-    return user;
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: convertToObjectId(user.profile_picture as unknown as string),
+    });
+    return { ...user, profile_picture: profilePicture };
   }
 
   async editPersonalDetail(id: ObjectId, dto: EditUserDto) {
