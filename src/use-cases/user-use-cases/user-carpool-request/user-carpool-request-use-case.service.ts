@@ -40,20 +40,22 @@ export class UserCarPoolRequestUseCaseService {
         'Carpool request by this trip does not exist',
       );
 
-    const carpool_requests = await this.carPoolRequestRepository.find({
+    const carpoolRequests = await this.carPoolRequestRepository.find({
       where: { trip: trip._id },
     });
 
-    return await Promise.all(
-      carpool_requests.map(async (carpool_request) => {
-        const requester = await this.userRepository.findOne({
-          where: { _id: carpool_request.requester },
-          select: ['username', 'email', 'phone_number'],
-        });
+    // return await Promise.all(
+    //   carpool_requests.map(async (carpool_request) => {
+    //     const requester = await this.userRepository.findOne({
+    //       where: { _id: carpool_request.requester },
+    //       select: ['username', 'email', 'phone_number'],
+    //     });
 
-        return { ...carpool_request, requester };
-      }),
-    );
+    //     return { ...carpool_request, requester };
+    //   }),
+    // );
+
+    return carpoolRequests;
   }
 
   async carPoolRequestAction(

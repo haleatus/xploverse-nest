@@ -9,7 +9,7 @@ export class CreateTripDto {
   end_date: Date;
   start_point: GeoDataInterface;
   end_point: GeoDataInterface;
-  stops: TripStopsInterface;
+  stops: TripStopsInterface[];
   is_car_pool?: boolean;
   max_participants: number;
 }
@@ -21,7 +21,7 @@ export class updateTripDto {
   end_date?: Date;
   start_point?: GeoDataInterface;
   end_point?: GeoDataInterface;
-  stops?: TripStopsInterface;
+  stops?: TripStopsInterface[];
   is_car_pool?: boolean;
   trip_status?: TripStatusEnum;
   max_participants?: number;
