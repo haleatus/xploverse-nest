@@ -90,7 +90,7 @@ export class AuthGuard implements CanActivate {
         if (!user) throw new AppNotFoundException('user does not exist');
 
         const profilePicture = await this.fileRepository.findOneBy({
-          _id: convertToObjectId(user.profile_picture as unknown as string),
+          _id: user.profile_picture,
         });
 
         request.user = { ...user, profile_picture: profilePicture };

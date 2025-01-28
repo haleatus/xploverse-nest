@@ -48,7 +48,7 @@ export class UserUseCaseService {
       throw new AppNotFoundException('user does not exist');
     }
     const profilePicture = await this.fileRepository.findOneBy({
-      _id: convertToObjectId(user.profile_picture as unknown as string),
+      _id: user.profile_picture,
     });
     return { ...user, profile_picture: profilePicture };
   }
@@ -94,6 +94,6 @@ export class UserUseCaseService {
       _id: user.profile_picture,
     });
 
-    return profilePicture.url;
+    return profilePicture;
   }
 }
