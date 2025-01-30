@@ -8,25 +8,25 @@ import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { UserOperatorRequestEntity } from 'src/data-services/mgdb/entities/user-operator-request.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 
 @Injectable()
 export class AdminUserUseCaseService {
   constructor(
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
 
     @InjectRepository(TripEntity)
-    private tripRepository: Repository<TripEntity>,
+    private tripRepository: MongoRepository<TripEntity>,
 
     @InjectRepository(CarPoolRequestEntity)
-    private carPoolRequestRepository: Repository<CarPoolRequestEntity>,
+    private carPoolRequestRepository: MongoRepository<CarPoolRequestEntity>,
 
     @InjectRepository(UserOperatorRequestEntity)
-    private userOperatorRequestRepository: Repository<UserOperatorRequestEntity>,
+    private userOperatorRequestRepository: MongoRepository<UserOperatorRequestEntity>,
 
     @InjectRepository(FileEntity)
-    private fileRepository: Repository<FileEntity>,
+    private fileRepository: MongoRepository<FileEntity>,
   ) {}
 
   async findAllOperatorUser() {

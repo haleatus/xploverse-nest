@@ -6,20 +6,20 @@ import { TripRatingDto } from 'src/core/dtos/request/trip-rating.dto';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 
 @Injectable()
 export class UserTripRatingUseCaseService {
   constructor(
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
 
     @InjectRepository(TripEntity)
-    private tripRepository: Repository<TripEntity>,
+    private tripRepository: MongoRepository<TripEntity>,
 
     @InjectRepository(TripRatingEntity)
-    private tripRatingRepository: Repository<TripRatingEntity>,
+    private tripRatingRepository: MongoRepository<TripRatingEntity>,
   ) {}
 
   async createTripRating(

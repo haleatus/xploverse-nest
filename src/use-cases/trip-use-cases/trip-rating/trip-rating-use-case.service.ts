@@ -4,20 +4,20 @@ import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 
 @Injectable()
 export class TripRatingUseCaseService {
   constructor(
     @InjectRepository(TripEntity)
-    private tripRepository: Repository<TripEntity>,
+    private tripRepository: MongoRepository<TripEntity>,
 
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
 
     @InjectRepository(TripRatingEntity)
-    private tripRatingRepository: Repository<TripRatingEntity>,
+    private tripRatingRepository: MongoRepository<TripRatingEntity>,
   ) {}
 
   async findTripRatingsByTrip(trip_id: string) {

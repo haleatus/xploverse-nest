@@ -6,16 +6,16 @@ import AppException from 'src/application/exception/app.exception';
 import { UserOperatorRequestStatusEnum } from 'src/common/enums/user-operator-request-status.enum';
 import { UserOperatorRequestEntity } from 'src/data-services/mgdb/entities/user-operator-request.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 
 @Injectable()
 export class UserOperatorUseCaseService {
   constructor(
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
 
     @InjectRepository(UserOperatorRequestEntity)
-    private userOperatorRequestRepository: Repository<UserOperatorRequestEntity>,
+    private userOperatorRequestRepository: MongoRepository<UserOperatorRequestEntity>,
   ) {}
 
   async createOperatorRequest(

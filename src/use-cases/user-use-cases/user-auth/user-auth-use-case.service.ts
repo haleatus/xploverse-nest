@@ -5,7 +5,7 @@ import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
 import { JwtTokenService } from 'src/libs/token/jwt/jwt-token.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 
 @Injectable()
 export class UserAuthUseCaseService {
@@ -13,7 +13,7 @@ export class UserAuthUseCaseService {
     private bcryptService: BcryptService,
     private jwtTokenService: JwtTokenService,
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
   ) {}
 
   async signIn(dto: SignInDto) {
