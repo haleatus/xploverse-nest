@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
@@ -34,6 +34,13 @@ export class UserTripRatingUseCaseService {
     });
 
     if (!trip) throw new AppNotFoundException('Trip does not exist');
+
+    const existingTripRating = await this.tripRatingRepository.findOne({
+      where: { rater: rater._id, trip: trip._id },
+    });
+
+    if (existingTripRating)
+      throw new ConflictException('You have already given rating to this trip');
 
     const tripRating = this.tripRatingRepository.create({
       ...dto,
