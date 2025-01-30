@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
@@ -11,13 +11,13 @@ import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-re
 export class AdminTripUseCaseService {
   constructor(
     @InjectRepository(TripEntity)
-    private tripRepository: Repository<TripEntity>,
+    private tripRepository: MongoRepository<TripEntity>,
 
     @InjectRepository(TripRatingEntity)
-    private tripRatingRepository: Repository<TripRatingEntity>,
+    private tripRatingRepository: MongoRepository<TripRatingEntity>,
 
     @InjectRepository(CarPoolRequestEntity)
-    private carpoolRequestRepository: Repository<CarPoolRequestEntity>,
+    private carpoolRequestRepository: MongoRepository<CarPoolRequestEntity>,
   ) {}
 
   async deleteTripById(tripId: string) {

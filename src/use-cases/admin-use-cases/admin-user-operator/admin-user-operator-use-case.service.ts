@@ -6,16 +6,16 @@ import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { UserOperatorRequestDto } from 'src/core/dtos/request/user-operator-request.dto';
 import { UserOperatorRequestEntity } from 'src/data-services/mgdb/entities/user-operator-request.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 
 @Injectable()
 export class AdminUserOperatorUseCaseService {
   constructor(
     @InjectRepository(UserOperatorRequestEntity)
-    private userOperatorRequestRepository: Repository<UserOperatorRequestEntity>,
+    private userOperatorRequestRepository: MongoRepository<UserOperatorRequestEntity>,
 
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
   ) {}
 
   async findAllOperatorRequest() {

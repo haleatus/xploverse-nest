@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 import { UserSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
@@ -14,10 +14,10 @@ import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 export class UserUseCaseService {
   constructor(
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
 
     @InjectRepository(FileEntity)
-    private fileRepository: Repository<FileEntity>,
+    private fileRepository: MongoRepository<FileEntity>,
 
     private bcryptService: BcryptService,
   ) {}
