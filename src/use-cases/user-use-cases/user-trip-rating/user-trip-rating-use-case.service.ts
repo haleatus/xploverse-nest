@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
@@ -6,20 +6,20 @@ import { TripRatingDto } from 'src/core/dtos/request/trip-rating.dto';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 
 @Injectable()
 export class UserTripRatingUseCaseService {
   constructor(
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
 
     @InjectRepository(TripEntity)
-    private tripRepository: Repository<TripEntity>,
+    private tripRepository: MongoRepository<TripEntity>,
 
     @InjectRepository(TripRatingEntity)
-    private tripRatingRepository: Repository<TripRatingEntity>,
+    private tripRatingRepository: MongoRepository<TripRatingEntity>,
   ) {}
 
   async createTripRating(
@@ -34,6 +34,13 @@ export class UserTripRatingUseCaseService {
     });
 
     if (!trip) throw new AppNotFoundException('Trip does not exist');
+
+    const existingTripRating = await this.tripRatingRepository.findOne({
+      where: { rater: rater._id, trip: trip._id },
+    });
+
+    if (existingTripRating)
+      throw new ConflictException('You have already given rating to this trip');
 
     const tripRating = this.tripRatingRepository.create({
       ...dto,

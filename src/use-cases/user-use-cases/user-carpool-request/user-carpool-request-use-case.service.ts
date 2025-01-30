@@ -14,7 +14,7 @@ import {
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
 
@@ -22,13 +22,13 @@ import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-stat
 export class UserCarPoolRequestUseCaseService {
   constructor(
     @InjectRepository(TripEntity)
-    private tripRepository: Repository<TripEntity>,
+    private tripRepository: MongoRepository<TripEntity>,
 
     @InjectRepository(CarPoolRequestEntity)
-    private carPoolRequestRepository: Repository<CarPoolRequestEntity>,
+    private carPoolRequestRepository: MongoRepository<CarPoolRequestEntity>,
 
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
   ) {}
 
   async findCarPoolRequestsByTrip(trip_id: string) {

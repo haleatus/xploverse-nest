@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import { CreateTripDto, updateTripDto } from 'src/core/dtos/request/trip.dto';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
@@ -15,13 +15,13 @@ import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.en
 export class UserTripUseCaseService {
   constructor(
     @InjectRepository(TripEntity)
-    private tripRepository: Repository<TripEntity>,
+    private tripRepository: MongoRepository<TripEntity>,
     @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    private userRepository: MongoRepository<UserEntity>,
     @InjectRepository(CarPoolRequestEntity)
-    private carPoolRequestRepository: Repository<CarPoolRequestEntity>,
+    private carPoolRequestRepository: MongoRepository<CarPoolRequestEntity>,
     @InjectRepository(TripRatingEntity)
-    private tripRatingRepository: Repository<TripRatingEntity>,
+    private tripRatingRepository: MongoRepository<TripRatingEntity>,
   ) {}
 
   // TODO :: trip status should be seen, if trip status is ongoing then only trip rating is available

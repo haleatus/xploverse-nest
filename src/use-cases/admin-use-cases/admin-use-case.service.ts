@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AdminEntity } from 'src/data-services/mgdb/entities/admin.entity';
-import { Repository } from 'typeorm';
+import { MongoRepository } from 'typeorm';
 import { ObjectId } from 'mongodb';
 import { AdminSignUpDto } from 'src/core/dtos/request/signup.dto';
 import { BcryptService } from 'src/libs/crypto/bcrypt/bcrypt.service';
@@ -11,7 +11,7 @@ import AppNotFoundException from 'src/application/exception/app-not-found.except
 export class AdminUseCaseService {
   constructor(
     @InjectRepository(AdminEntity)
-    private adminRepository: Repository<AdminEntity>,
+    private adminRepository: MongoRepository<AdminEntity>,
     private bcryptService: BcryptService,
   ) {}
 
