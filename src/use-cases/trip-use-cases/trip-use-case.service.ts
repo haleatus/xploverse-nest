@@ -58,6 +58,10 @@ export class TripUseCaseService {
       }),
     );
 
+    if (carPoolRequestCount === 0) {
+      return 0.0;
+    }
+
     const estimatedCostPerPerson = totalTripCost / carPoolRequestCount;
 
     return !Number.isNaN(estimatedCostPerPerson) ? estimatedCostPerPerson : 0.0;
