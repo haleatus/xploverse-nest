@@ -37,14 +37,15 @@ export class TripUseCaseService {
     maximumTripCapacity: number,
     carpoolRequests: CarPoolRequestEntity[],
   ) {
-    let carPoolRequestCount = 0;
+    let carPoolRequestParticipantCount = 0;
     await Promise.all(
-      carpoolRequests.map(() => {
-        carPoolRequestCount = carPoolRequestCount + 1;
+      carpoolRequests.map((carpoolRequest) => {
+        carPoolRequestParticipantCount =
+          carPoolRequestParticipantCount + carpoolRequest.participants_count;
       }),
     );
 
-    return maximumTripCapacity - carPoolRequestCount;
+    return maximumTripCapacity - carPoolRequestParticipantCount;
   }
 
   async estimateTotalCostPerParticipant(
