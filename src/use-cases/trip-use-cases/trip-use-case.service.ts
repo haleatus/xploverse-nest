@@ -43,7 +43,24 @@ export class TripUseCaseService {
         carPoolRequestCount = carPoolRequestCount + 1;
       }),
     );
+
     return maximumTripCapacity - carPoolRequestCount;
+  }
+
+  async estimateTotalCostPerParticipant(
+    totalTripCost: number,
+    carpoolRequests: CarPoolRequestEntity[],
+  ) {
+    let carPoolRequestCount = 0;
+    await Promise.all(
+      carpoolRequests.map(() => {
+        carPoolRequestCount = carPoolRequestCount + 1;
+      }),
+    );
+
+    const estimatedCostPerPerson = totalTripCost / carPoolRequestCount;
+
+    return !Number.isNaN(estimatedCostPerPerson) ? estimatedCostPerPerson : 0.0;
   }
 
   async findAllTrip() {
@@ -115,11 +132,17 @@ export class TripUseCaseService {
       carPoolRequests,
     );
 
+    const estimatedCostPerPerson = await this.estimateTotalCostPerParticipant(
+      trip.total_trip_cost,
+      carPoolRequests,
+    );
+
     const averageRatings = await this.calculateAverateRatings(tripRatings);
 
     return {
       ...trip,
       planner,
+      estimated_cost_per_person: estimatedCostPerPerson,
       available_seats: availableSeats,
       average_ratings: averageRatings,
     };
