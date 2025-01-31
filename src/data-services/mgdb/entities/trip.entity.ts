@@ -17,6 +17,9 @@ export class TripEntity extends BaseEntity {
   trip_image: ObjectId;
 
   @Column()
+  total_trip_cost: number;
+
+  @Column()
   planner: ObjectId;
 
   @Column()

@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 import { GeoDataInterface } from 'src/common/interface/geodata.interface';
 import { TripStopsInterface } from 'src/common/interface/trip-stops.interfacet';
@@ -5,6 +6,8 @@ import { TripStopsInterface } from 'src/common/interface/trip-stops.interfacet';
 export class CreateTripDto {
   title: string;
   description: string;
+  trip_image?: ObjectId;
+  total_trip_cost: number;
   start_date: Date;
   end_date: Date;
   start_point: GeoDataInterface;
@@ -17,6 +20,8 @@ export class CreateTripDto {
 export class updateTripDto {
   title?: string;
   description?: string;
+  trip_image?: ObjectId;
+  total_trip_cost?: number;
   start_date?: Date;
   end_date?: Date;
   start_point?: GeoDataInterface;
