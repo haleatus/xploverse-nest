@@ -14,7 +14,10 @@ export class UserOperatorGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const { url: requestUrl } = request;
 
-    if (requestUrl.startsWith('/api/xploverse/user/trip/my-completed-trips'))
+    if (
+      requestUrl.startsWith('/api/xploverse/user/trip/my-completed-trips') ||
+      requestUrl.startsWith('/api/xploverse/user/trip/my-trips')
+    )
       return true;
 
     if (request.user?.is_operator !== true)
