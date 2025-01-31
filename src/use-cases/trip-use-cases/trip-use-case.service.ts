@@ -41,7 +41,9 @@ export class TripUseCaseService {
     await Promise.all(
       carpoolRequests.map((carpoolRequest) => {
         carPoolRequestParticipantCount =
-          carPoolRequestParticipantCount + carpoolRequest.participants_count;
+          carPoolRequestParticipantCount + carpoolRequest.participants_count
+            ? carpoolRequest.participants_count
+            : 0;
       }),
     );
 
