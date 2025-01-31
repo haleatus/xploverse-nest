@@ -6,6 +6,8 @@ import AppNotFoundException from 'src/application/exception/app-not-found.except
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
+import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
+import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
 
 @Injectable()
 export class TripUseCaseService {
@@ -16,6 +18,8 @@ export class TripUseCaseService {
     private userRepository: MongoRepository<UserEntity>,
     @InjectRepository(TripRatingEntity)
     private tripRatingRepository: MongoRepository<TripRatingEntity>,
+    @InjectRepository(CarPoolRequestEntity)
+    private carpoolRequestRepository: MongoRepository<CarPoolRequestEntity>,
   ) {}
 
   async calculateAverateRatings(tripRatings: TripRatingEntity[]) {
@@ -27,6 +31,48 @@ export class TripUseCaseService {
     const averageRatings = count / tripRatings.length;
 
     return !Number.isNaN(averageRatings) ? averageRatings : 0;
+  }
+
+  async calculateAvailableSeats(
+    maximumTripCapacity: number,
+    carpoolRequests: CarPoolRequestEntity[],
+  ) {
+    let carPoolRequestParticipantCount = 0;
+    await Promise.all(
+      carpoolRequests.map((carpoolRequest) => {
+        carPoolRequestParticipantCount =
+          carPoolRequestParticipantCount +
+          (carpoolRequest.participants_count
+            ? carpoolRequest.participants_count
+            : 0);
+      }),
+    );
+
+    return maximumTripCapacity - carPoolRequestParticipantCount;
+  }
+
+  async estimateTotalPerParticipantCost(
+    totalTripCost: number,
+    carpoolRequests: CarPoolRequestEntity[],
+  ) {
+    let carPoolRequestCount = 0;
+    await Promise.all(
+      carpoolRequests.map((carpoolRequest) => {
+        carPoolRequestCount =
+          carPoolRequestCount +
+          (carpoolRequest.participants_count
+            ? carpoolRequest.participants_count
+            : 0);
+      }),
+    );
+
+    if (carPoolRequestCount === 0) {
+      return 0.0;
+    }
+
+    const estimatedCostPerPerson = totalTripCost / carPoolRequestCount;
+
+    return !Number.isNaN(estimatedCostPerPerson) ? estimatedCostPerPerson : 0.0;
   }
 
   async findAllTrip() {
@@ -45,6 +91,18 @@ export class TripUseCaseService {
           where: { trip: trip._id },
         });
 
+        const carPoolRequests = await this.carpoolRequestRepository.find({
+          where: {
+            trip: trip._id,
+            carpool_request_status: CarPoolRequestStatusEnum.ACCEPTED,
+          },
+        });
+
+        const availableSeats = await this.calculateAvailableSeats(
+          trip.max_participants,
+          carPoolRequests,
+        );
+
         // TODO :: why is averateRatings NaN for when there are no tripRatings for a trip :: find a better solution later
 
         const averageRatings = await this.calculateAverateRatings(tripRatings);
@@ -52,7 +110,8 @@ export class TripUseCaseService {
         return {
           ...trip,
           planner,
-          averageRatings,
+          available_seats: availableSeats,
+          average_ratings: averageRatings,
         };
       }),
     );
@@ -73,8 +132,31 @@ export class TripUseCaseService {
       where: { trip: trip._id },
     });
 
+    const carPoolRequests = await this.carpoolRequestRepository.find({
+      where: {
+        trip: trip._id,
+        carpool_request_status: CarPoolRequestStatusEnum.ACCEPTED,
+      },
+    });
+
+    const availableSeats = await this.calculateAvailableSeats(
+      trip.max_participants,
+      carPoolRequests,
+    );
+
+    const estimatedCostPerPerson = await this.estimateTotalPerParticipantCost(
+      trip.total_trip_cost,
+      carPoolRequests,
+    );
+
     const averageRatings = await this.calculateAverateRatings(tripRatings);
 
-    return { ...trip, planner, averageRatings };
+    return {
+      ...trip,
+      planner,
+      estimated_cost_per_person: estimatedCostPerPerson,
+      available_seats: availableSeats,
+      average_ratings: averageRatings,
+    };
   }
 }

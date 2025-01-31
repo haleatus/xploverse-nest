@@ -44,18 +44,16 @@ export class UserCarPoolRequestUseCaseService {
       where: { trip: trip._id },
     });
 
-    // return await Promise.all(
-    //   carpool_requests.map(async (carpool_request) => {
-    //     const requester = await this.userRepository.findOne({
-    //       where: { _id: carpool_request.requester },
-    //       select: ['username', 'email', 'phone_number'],
-    //     });
+    return await Promise.all(
+      carpoolRequests.map(async (carpoolRequest) => {
+        const requester = await this.userRepository.findOne({
+          where: { _id: carpoolRequest.requester },
+          select: ['username', 'email', 'phone_number'],
+        });
 
-    //     return { ...carpool_request, requester };
-    //   }),
-    // );
-
-    return carpoolRequests;
+        return { ...carpoolRequest, requester };
+      }),
+    );
   }
 
   async carPoolRequestAction(
