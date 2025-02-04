@@ -6,7 +6,7 @@ import { TripStopsInterface } from 'src/common/interface/trip-stops.interfacet';
 export class CreateTripDto {
   title: string;
   description: string;
-  trip_image?: ObjectId;
+  trip_image?: string;
   total_trip_cost: number;
   start_date: Date;
   end_date: Date;
@@ -20,7 +20,7 @@ export class CreateTripDto {
 export class updateTripDto {
   title?: string;
   description?: string;
-  trip_image?: ObjectId;
+  trip_image?: string;
   total_trip_cost?: number;
   start_date?: Date;
   end_date?: Date;
