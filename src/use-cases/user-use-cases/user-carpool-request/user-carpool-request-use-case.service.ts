@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
@@ -18,6 +14,7 @@ import { MongoRepository } from 'typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
 import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
+import AppException from 'src/application/exception/app.exception';
 
 @Injectable()
 export class UserCarPoolRequestUseCaseService {
@@ -111,15 +108,16 @@ export class UserCarPoolRequestUseCaseService {
       carpool_request_status: dto.carpool_request_status,
     };
 
-    (updatedCarPoolRequest.carpool_progress_status = dto.carpool_request_status
+    updatedCarPoolRequest.carpool_progress_status = dto.carpool_request_status
       ? dto.carpool_request_status === CarPoolRequestStatusEnum.ACCEPTED
         ? CarPoolProgressStatusEnum.IN_PROGRESS
         : CarPoolProgressStatusEnum.NOT_STARTED
-      : CarPoolProgressStatusEnum.NOT_STARTED),
-      await this.carPoolRequestRepository.update(
-        { _id: carpoolRequest._id },
-        updatedCarPoolRequest,
-      );
+      : CarPoolProgressStatusEnum.NOT_STARTED;
+    await this.carPoolRequestRepository.update(
+      { _id: carpoolRequest._id },
+      updatedCarPoolRequest,
+    );
+
     return updatedCarPoolRequest;
   }
 
@@ -130,6 +128,13 @@ export class UserCarPoolRequestUseCaseService {
 
     if (!carpoolRequest)
       throw new AppNotFoundException('Carpool request does not exist');
+
+    if (
+      carpoolRequest.carpool_request_status !==
+      CarPoolRequestStatusEnum.ACCEPTED
+    ) {
+      throw new AppException('Carpool request has not been accepted yet');
+    }
 
     const updatedCarPoolRequest = {
       ...carpoolRequest,
