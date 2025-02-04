@@ -12,6 +12,7 @@ import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
 import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
 import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 
 @Injectable()
 export class UserTripUseCaseService {
@@ -24,11 +25,9 @@ export class UserTripUseCaseService {
     private carPoolRequestRepository: MongoRepository<CarPoolRequestEntity>,
     @InjectRepository(TripRatingEntity)
     private tripRatingRepository: MongoRepository<TripRatingEntity>,
+    @InjectRepository(FileEntity)
+    private fileRepository: MongoRepository<FileEntity>,
   ) {}
-
-  // TODO :: trip status should be seen, if trip status is ongoing then only trip rating is available
-
-  // TODO :: automatically remove all the carpool requests when the trip is completed
 
   async calculateAverateRatings(tripRatings: TripRatingEntity[]) {
     let count = 0;
@@ -60,13 +59,19 @@ export class UserTripUseCaseService {
           _id: userTrip.planner,
         });
 
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: planner.profile_picture,
+        });
+
+        const plannerData = { ...planner, profile_picture: profilePicture };
+
         const tripRatings = await this.tripRatingRepository.find({
           where: { trip: userTrip._id },
         });
 
         const averageRatings = await this.calculateAverateRatings(tripRatings);
 
-        return { ...userTrip, planner, averageRatings };
+        return { ...userTrip, planner: plannerData, averageRatings };
       }),
     );
   }
@@ -75,6 +80,12 @@ export class UserTripUseCaseService {
     const planner = await this.userRepository.findOneBy({
       _id: planner_id,
     });
+
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: planner.profile_picture,
+    });
+
+    const plannerData = { ...planner, profile_picture: profilePicture };
 
     const trips = await this.tripRepository.find({
       where: { planner: planner._id },
@@ -92,7 +103,7 @@ export class UserTripUseCaseService {
 
         const averageRatings = await this.calculateAverateRatings(tripRatings);
 
-        return { ...trip, planner, averageRatings };
+        return { ...trip, planner: plannerData, averageRatings };
       }),
     );
   }

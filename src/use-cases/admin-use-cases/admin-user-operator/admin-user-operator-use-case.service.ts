@@ -4,6 +4,7 @@ import AppNotFoundException from 'src/application/exception/app-not-found.except
 import { UserOperatorRequestStatusEnum } from 'src/common/enums/user-operator-request-status.enum';
 import { convertToObjectId } from 'src/common/helpers/convert-to-object-id';
 import { UserOperatorRequestDto } from 'src/core/dtos/request/user-operator-request.dto';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 import { UserOperatorRequestEntity } from 'src/data-services/mgdb/entities/user-operator-request.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { MongoRepository } from 'typeorm';
@@ -16,6 +17,9 @@ export class AdminUserOperatorUseCaseService {
 
     @InjectRepository(UserEntity)
     private userRepository: MongoRepository<UserEntity>,
+
+    @InjectRepository(FileEntity)
+    private fileRepository: MongoRepository<FileEntity>,
   ) {}
 
   async findAllOperatorRequest() {
@@ -25,10 +29,13 @@ export class AdminUserOperatorUseCaseService {
       requests.map(async (request) => {
         const requester = await this.userRepository.findOne({
           where: { _id: request.requester },
-          select: ['username', 'email', 'phone_number'],
+          select: ['username', 'email', 'phone_number', 'profile_picture'],
         });
-
-        return { ...request, requester };
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: requester.profile_picture,
+        });
+        const requesterData = { ...requester, profile_picture: profilePicture };
+        return { ...request, requester: requesterData };
       }),
     );
   }

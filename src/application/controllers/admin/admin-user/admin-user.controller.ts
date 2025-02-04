@@ -7,6 +7,13 @@ export class AdminUserController {
   constructor(private adminUserUseCaseService: AdminUserUseCaseService) {}
 
   @Get('/get-all')
+  async getAllUsers() {
+    return CoreApiResponse.success(
+      await this.adminUserUseCaseService.findAllUsers(),
+    );
+  }
+
+  @Get('/non-operator/get-all')
   async getAlNonOperatorlUsers() {
     return CoreApiResponse.success(
       await this.adminUserUseCaseService.findAllNonOperatorUser(),
