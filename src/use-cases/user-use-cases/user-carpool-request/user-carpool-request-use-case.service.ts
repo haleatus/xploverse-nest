@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
@@ -17,6 +13,8 @@ import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { MongoRepository } from 'typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
+import AppException from 'src/application/exception/app.exception';
 
 @Injectable()
 export class UserCarPoolRequestUseCaseService {
@@ -29,7 +27,37 @@ export class UserCarPoolRequestUseCaseService {
 
     @InjectRepository(UserEntity)
     private userRepository: MongoRepository<UserEntity>,
+
+    @InjectRepository(FileEntity)
+    private fileRepository: MongoRepository<FileEntity>,
   ) {}
+
+  async findAllCarpoolRequestsByUser(userId: string) {
+    const user = await this.userRepository.findOneBy({
+      _id: convertToObjectId(userId),
+    });
+    if (!user) throw new AppNotFoundException('User does not exist');
+
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: user.profile_picture,
+    });
+
+    const requesterData = { ...user, profile_picture: profilePicture };
+
+    const carpoolRequests = await this.carPoolRequestRepository.find({
+      where: { requester: user._id },
+    });
+
+    return await Promise.all(
+      carpoolRequests.map(async (carpoolRequest) => {
+        const trip = await this.tripRepository.findOneBy({
+          _id: carpoolRequest.trip,
+        });
+
+        return { ...carpoolRequest, trip, requester: requesterData };
+      }),
+    );
+  }
 
   async findCarPoolRequestsByTrip(trip_id: string) {
     const trip = await this.tripRepository.findOneBy({
@@ -46,12 +74,21 @@ export class UserCarPoolRequestUseCaseService {
 
     return await Promise.all(
       carpoolRequests.map(async (carpoolRequest) => {
+        const trip = await this.tripRepository.findOneBy({
+          _id: carpoolRequest.trip,
+        });
         const requester = await this.userRepository.findOne({
           where: { _id: carpoolRequest.requester },
-          select: ['username', 'email', 'phone_number'],
+          select: ['username', 'email', 'phone_number', 'profile_picture'],
         });
 
-        return { ...carpoolRequest, requester };
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: requester.profile_picture,
+        });
+
+        const requesterData = { ...requester, profile_picture: profilePicture };
+
+        return { ...carpoolRequest, trip, requester: requesterData };
       }),
     );
   }
@@ -71,31 +108,33 @@ export class UserCarPoolRequestUseCaseService {
       carpool_request_status: dto.carpool_request_status,
     };
 
-    (updatedCarPoolRequest.carpool_progress_status = dto.carpool_request_status
+    updatedCarPoolRequest.carpool_progress_status = dto.carpool_request_status
       ? dto.carpool_request_status === CarPoolRequestStatusEnum.ACCEPTED
         ? CarPoolProgressStatusEnum.IN_PROGRESS
         : CarPoolProgressStatusEnum.NOT_STARTED
-      : CarPoolProgressStatusEnum.NOT_STARTED),
-      await this.carPoolRequestRepository.update(
-        { _id: carpoolRequest._id },
-        updatedCarPoolRequest,
-      );
+      : CarPoolProgressStatusEnum.NOT_STARTED;
+    await this.carPoolRequestRepository.update(
+      { _id: carpoolRequest._id },
+      updatedCarPoolRequest,
+    );
+
     return updatedCarPoolRequest;
   }
 
-  async markCarPoolAsComplete(trip_id: string) {
-    const trip = await this.tripRepository.findOneBy({
-      _id: convertToObjectId(trip_id),
-    });
-
-    if (!trip) throw new AppNotFoundException('trip does not exist');
-
+  async markCarPoolAsComplete(carpool_request_id: string) {
     const carpoolRequest = await this.carPoolRequestRepository.findOne({
-      where: { trip: trip._id },
+      where: { _id: convertToObjectId(carpool_request_id) },
     });
 
     if (!carpoolRequest)
       throw new AppNotFoundException('Carpool request does not exist');
+
+    if (
+      carpoolRequest.carpool_request_status !==
+      CarPoolRequestStatusEnum.ACCEPTED
+    ) {
+      throw new AppException('Carpool request has not been accepted yet');
+    }
 
     const updatedCarPoolRequest = {
       ...carpoolRequest,
@@ -115,6 +154,12 @@ export class UserCarPoolRequestUseCaseService {
       _id: requester_id,
     });
 
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: requester.profile_picture,
+    });
+
+    const requesterData = { ...requester, profile_picture: profilePicture };
+
     const carpoolRequest = await this.carPoolRequestRepository.findOne({
       where: { requester: requester._id },
     });
@@ -124,7 +169,11 @@ export class UserCarPoolRequestUseCaseService {
         'No carpool request has been made by this user',
       );
 
-    return carpoolRequest;
+    const trip = await this.tripRepository.findOneBy({
+      _id: carpoolRequest.trip,
+    });
+
+    return { ...carpoolRequest, requester: requesterData, trip };
   }
 
   async createCarPoolRequest(
@@ -177,5 +226,18 @@ export class UserCarPoolRequestUseCaseService {
       updatedCarPoolRequest,
     );
     return updatedCarPoolRequest;
+  }
+
+  async cancelCarPoolRequest(carpool_request_id: string) {
+    const carpoolRequest = await this.carPoolRequestRepository.findOneBy({
+      _id: convertToObjectId(carpool_request_id),
+    });
+
+    if (!carpoolRequest)
+      throw new AppNotFoundException(
+        'No carpool request has been made by this user',
+      );
+
+    await this.carPoolRequestRepository.delete({ _id: carpoolRequest._id });
   }
 }

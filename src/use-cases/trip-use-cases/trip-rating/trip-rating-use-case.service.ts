@@ -6,6 +6,7 @@ import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { MongoRepository } from 'typeorm';
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 
 @Injectable()
 export class TripRatingUseCaseService {
@@ -18,6 +19,9 @@ export class TripRatingUseCaseService {
 
     @InjectRepository(TripRatingEntity)
     private tripRatingRepository: MongoRepository<TripRatingEntity>,
+
+    @InjectRepository(FileEntity)
+    private fileRepository: MongoRepository<FileEntity>,
   ) {}
 
   async findTripRatingsByTrip(trip_id: string) {
@@ -35,10 +39,13 @@ export class TripRatingUseCaseService {
       tripRatings.map(async (tripRating) => {
         const rater = await this.userRepository.findOne({
           where: { _id: tripRating.rater },
-          select: ['username', 'email', 'phone_number'],
+          select: ['username', 'email', 'phone_number', 'profile_picture'],
         });
-
-        return { ...tripRating, rater };
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: rater.profile_picture,
+        });
+        const raterData = { ...rater, profile_picture: profilePicture };
+        return { ...tripRating, rater: raterData };
       }),
     );
   }
@@ -55,7 +62,11 @@ export class TripRatingUseCaseService {
       where: { _id: tripRating.rater },
       select: ['username', 'email', 'phone_number'],
     });
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: rater.profile_picture,
+    });
+    const raterData = { ...rater, profile_picture: profilePicture };
 
-    return { ...tripRating, rater };
+    return { ...tripRating, rater: raterData };
   }
 }

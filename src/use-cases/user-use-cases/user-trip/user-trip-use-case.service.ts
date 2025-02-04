@@ -10,6 +10,8 @@ import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-re
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
+import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 
 @Injectable()
 export class UserTripUseCaseService {
@@ -22,9 +24,9 @@ export class UserTripUseCaseService {
     private carPoolRequestRepository: MongoRepository<CarPoolRequestEntity>,
     @InjectRepository(TripRatingEntity)
     private tripRatingRepository: MongoRepository<TripRatingEntity>,
+    @InjectRepository(FileEntity)
+    private fileRepository: MongoRepository<FileEntity>,
   ) {}
-
-  // TODO :: trip status should be seen, if trip status is ongoing then only trip rating is available
 
   async calculateAverateRatings(tripRatings: TripRatingEntity[]) {
     let count = 0;
@@ -56,13 +58,28 @@ export class UserTripUseCaseService {
           _id: userTrip.planner,
         });
 
+        const tripImage = await this.fileRepository.findOneBy({
+          _id: userTrip.trip_image,
+        });
+
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: planner.profile_picture,
+        });
+
+        const plannerData = { ...planner, profile_picture: profilePicture };
+
         const tripRatings = await this.tripRatingRepository.find({
           where: { trip: userTrip._id },
         });
 
         const averageRatings = await this.calculateAverateRatings(tripRatings);
 
-        return { ...userTrip, planner, averageRatings };
+        return {
+          ...userTrip,
+          trip_image: tripImage,
+          planner: plannerData,
+          averageRatings,
+        };
       }),
     );
   }
@@ -72,23 +89,38 @@ export class UserTripUseCaseService {
       _id: planner_id,
     });
 
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: planner.profile_picture,
+    });
+
+    const plannerData = { ...planner, profile_picture: profilePicture };
+
     const trips = await this.tripRepository.find({
       where: { planner: planner._id },
     });
 
     return await Promise.all(
       trips.map(async (trip) => {
-        const planner = await this.userRepository.findOneBy({
-          _id: trip.planner,
-        });
-
         const tripRatings = await this.tripRatingRepository.find({
           where: { trip: trip._id },
         });
 
+        console.log(trip.trip_image);
+
+        const tripImage = await this.fileRepository.findOneBy({
+          _id: trip.trip_image,
+        });
+
+        console.log(tripImage);
+
         const averageRatings = await this.calculateAverateRatings(tripRatings);
 
-        return { ...trip, planner, averageRatings };
+        return {
+          ...trip,
+          trip_image: tripImage,
+          planner: plannerData,
+          averageRatings,
+        };
       }),
     );
   }
@@ -103,6 +135,7 @@ export class UserTripUseCaseService {
 
     const newTrip = this.tripRepository.create({
       ...dto,
+      trip_image: convertToObjectId(dto.trip_image),
       planner: planner._id,
       trip_status: TripStatusEnum.UPCOMING,
       is_car_pool: dto.is_car_pool ?? false,
@@ -117,7 +150,28 @@ export class UserTripUseCaseService {
     if (!trip) {
       throw new AppNotFoundException('Trip does not exist');
     }
-    const updatedTrip = { ...trip, ...dto };
+
+    const updatedTrip = {
+      ...trip,
+      ...dto,
+      trip_image: convertToObjectId(dto.trip_image),
+    };
+
+    if (dto?.trip_status === TripStatusEnum.COMPLETED) {
+      updatedTrip.is_car_pool = false;
+      const carPoolRequests = await this.carPoolRequestRepository.find({
+        where: { trip: trip._id },
+      });
+      await Promise.all(
+        carPoolRequests.map(async (carPoolRequest) => {
+          await this.carPoolRequestRepository.update(
+            { _id: carPoolRequest._id },
+            { carpool_progress_status: CarPoolProgressStatusEnum.COMPLETED },
+          );
+        }),
+      );
+    }
+
     await this.tripRepository.update({ _id: trip._id }, updatedTrip);
     return updatedTrip;
   }

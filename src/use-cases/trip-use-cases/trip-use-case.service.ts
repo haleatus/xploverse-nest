@@ -8,6 +8,7 @@ import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
 import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-request.entity';
 import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 
 @Injectable()
 export class TripUseCaseService {
@@ -20,6 +21,8 @@ export class TripUseCaseService {
     private tripRatingRepository: MongoRepository<TripRatingEntity>,
     @InjectRepository(CarPoolRequestEntity)
     private carpoolRequestRepository: MongoRepository<CarPoolRequestEntity>,
+    @InjectRepository(FileEntity)
+    private fileRepository: MongoRepository<FileEntity>,
   ) {}
 
   async calculateAverateRatings(tripRatings: TripRatingEntity[]) {
@@ -49,6 +52,20 @@ export class TripUseCaseService {
     );
 
     return maximumTripCapacity - carPoolRequestParticipantCount;
+  }
+
+  async getAllTripParticipantsByCarpoolRequests(
+    carpoolRequests: CarPoolRequestEntity[],
+  ) {
+    return await Promise.all(
+      carpoolRequests.map(async (carpoolRequest) => {
+        const user = await this.userRepository.findOne({
+          where: { _id: carpoolRequest.requester },
+          select: ['username', 'email', 'phone_number'],
+        });
+        return user;
+      }),
+    );
   }
 
   async estimateTotalPerParticipantCost(
@@ -84,8 +101,18 @@ export class TripUseCaseService {
       trips.map(async (trip) => {
         const planner = await this.userRepository.findOne({
           where: { _id: trip.planner },
-          select: ['username', 'email', 'phone_number'],
+          select: ['username', 'email', 'phone_number', 'profile_picture'],
         });
+
+        const tripImage = await this.fileRepository.findOneBy({
+          _id: trip.trip_image,
+        });
+
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: planner.profile_picture,
+        });
+
+        const plannerData = { ...planner, profile_picture: profilePicture };
 
         const tripRatings = await this.tripRatingRepository.find({
           where: { trip: trip._id },
@@ -109,7 +136,8 @@ export class TripUseCaseService {
 
         return {
           ...trip,
-          planner,
+          trip_image: tripImage,
+          planner: plannerData,
           available_seats: availableSeats,
           average_ratings: averageRatings,
         };
@@ -125,8 +153,18 @@ export class TripUseCaseService {
     }
     const planner = await this.userRepository.findOne({
       where: { _id: trip.planner },
-      select: ['username', 'email', 'phone_number'],
+      select: ['username', 'email', 'phone_number', 'profile_picture'],
     });
+
+    const tripImage = await this.fileRepository.findOneBy({
+      _id: trip.trip_image,
+    });
+
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: planner.profile_picture,
+    });
+
+    const plannerData = { ...planner, profile_picture: profilePicture };
 
     const tripRatings = await this.tripRatingRepository.find({
       where: { trip: trip._id },
@@ -151,12 +189,17 @@ export class TripUseCaseService {
 
     const averageRatings = await this.calculateAverateRatings(tripRatings);
 
+    const tripParticipants =
+      await this.getAllTripParticipantsByCarpoolRequests(carPoolRequests);
+
     return {
       ...trip,
-      planner,
+      trip_image: tripImage,
+      planner: plannerData,
       estimated_cost_per_person: estimatedCostPerPerson,
       available_seats: availableSeats,
       average_ratings: averageRatings,
+      trip_participants: tripParticipants ? tripParticipants : [],
     };
   }
 }
