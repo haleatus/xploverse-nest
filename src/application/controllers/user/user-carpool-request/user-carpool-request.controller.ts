@@ -23,6 +23,15 @@ export class UserCarPoolRequestController {
     private userCarPoolRequestUseCaseService: UserCarPoolRequestUseCaseService,
   ) {}
 
+  @Get('/:id/get-all')
+  async getAllCarpoolRequestsByUser(@Param('id') user_id: string) {
+    return CoreApiResponse.success(
+      await this.userCarPoolRequestUseCaseService.findAllCarpoolRequestsByUser(
+        user_id,
+      ),
+    );
+  }
+
   @Get('/get/trip/:id')
   async getByTrip(@Param('id') trip_id: string) {
     return CoreApiResponse.success(
