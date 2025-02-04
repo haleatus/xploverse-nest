@@ -29,6 +29,26 @@ export class AdminUserUseCaseService {
     private fileRepository: MongoRepository<FileEntity>,
   ) {}
 
+  async findAllUsers() {
+    const users = await this.userRepository.find({
+      select: [
+        'username',
+        'email',
+        'is_operator',
+        'phone_number',
+        'profile_picture',
+      ],
+    });
+    return await Promise.all(
+      users.map(async (user) => {
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: user.profile_picture,
+        });
+        return { ...user, profile_picture: profilePicture };
+      }),
+    );
+  }
+
   async findAllOperatorUser() {
     const users = await this.userRepository.find({
       where: { is_operator: true },

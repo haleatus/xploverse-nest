@@ -17,6 +17,7 @@ import { TripEntity } from 'src/data-services/mgdb/entities/trip.entity';
 import { MongoRepository } from 'typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
+import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 
 @Injectable()
 export class UserCarPoolRequestUseCaseService {
@@ -29,6 +30,9 @@ export class UserCarPoolRequestUseCaseService {
 
     @InjectRepository(UserEntity)
     private userRepository: MongoRepository<UserEntity>,
+
+    @InjectRepository(FileEntity)
+    private fileRepository: MongoRepository<FileEntity>,
   ) {}
 
   async findAllCarpoolRequestsByUser(userId: string) {
@@ -36,6 +40,12 @@ export class UserCarPoolRequestUseCaseService {
       _id: convertToObjectId(userId),
     });
     if (!user) throw new AppNotFoundException('User does not exist');
+
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: user.profile_picture,
+    });
+
+    const requesterData = { ...user, profile_picture: profilePicture };
 
     const carpoolRequests = await this.carPoolRequestRepository.find({
       where: { requester: user._id },
@@ -47,7 +57,7 @@ export class UserCarPoolRequestUseCaseService {
           _id: carpoolRequest.trip,
         });
 
-        return { ...carpoolRequest, trip, requester: user };
+        return { ...carpoolRequest, trip, requester: requesterData };
       }),
     );
   }
@@ -74,7 +84,14 @@ export class UserCarPoolRequestUseCaseService {
           where: { _id: carpoolRequest.requester },
           select: ['username', 'email', 'phone_number', 'profile_picture'],
         });
-        return { ...carpoolRequest, trip, requester };
+
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: requester.profile_picture,
+        });
+
+        const requesterData = { ...requester, profile_picture: profilePicture };
+
+        return { ...carpoolRequest, trip, requester: requesterData };
       }),
     );
   }
@@ -132,6 +149,12 @@ export class UserCarPoolRequestUseCaseService {
       _id: requester_id,
     });
 
+    const profilePicture = await this.fileRepository.findOneBy({
+      _id: requester.profile_picture,
+    });
+
+    const requesterData = { ...requester, profile_picture: profilePicture };
+
     const carpoolRequest = await this.carPoolRequestRepository.findOne({
       where: { requester: requester._id },
     });
@@ -145,7 +168,7 @@ export class UserCarPoolRequestUseCaseService {
       _id: carpoolRequest.trip,
     });
 
-    return { ...carpoolRequest, requester, trip };
+    return { ...carpoolRequest, requester: requesterData, trip };
   }
 
   async createCarPoolRequest(
