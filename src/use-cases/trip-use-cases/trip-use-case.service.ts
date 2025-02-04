@@ -104,6 +104,10 @@ export class TripUseCaseService {
           select: ['username', 'email', 'phone_number', 'profile_picture'],
         });
 
+        const tripImage = await this.fileRepository.findOneBy({
+          _id: trip.trip_image,
+        });
+
         const profilePicture = await this.fileRepository.findOneBy({
           _id: planner.profile_picture,
         });
@@ -132,6 +136,7 @@ export class TripUseCaseService {
 
         return {
           ...trip,
+          trip_image: tripImage,
           planner: plannerData,
           available_seats: availableSeats,
           average_ratings: averageRatings,
@@ -149,6 +154,10 @@ export class TripUseCaseService {
     const planner = await this.userRepository.findOne({
       where: { _id: trip.planner },
       select: ['username', 'email', 'phone_number', 'profile_picture'],
+    });
+
+    const tripImage = await this.fileRepository.findOneBy({
+      _id: trip.trip_image,
     });
 
     const profilePicture = await this.fileRepository.findOneBy({
@@ -185,6 +194,7 @@ export class TripUseCaseService {
 
     return {
       ...trip,
+      trip_image: tripImage,
       planner: plannerData,
       estimated_cost_per_person: estimatedCostPerPerson,
       available_seats: availableSeats,
