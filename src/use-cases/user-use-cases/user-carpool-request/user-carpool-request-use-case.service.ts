@@ -31,6 +31,27 @@ export class UserCarPoolRequestUseCaseService {
     private userRepository: MongoRepository<UserEntity>,
   ) {}
 
+  async findAllCarpoolRequestsByUser(userId: string) {
+    const user = await this.userRepository.findOneBy({
+      _id: convertToObjectId(userId),
+    });
+    if (!user) throw new AppNotFoundException('User does not exist');
+
+    const carpoolRequests = await this.carPoolRequestRepository.find({
+      where: { requester: user._id },
+    });
+
+    return await Promise.all(
+      carpoolRequests.map(async (carpoolRequest) => {
+        const trip = await this.tripRepository.findOneBy({
+          _id: carpoolRequest.trip,
+        });
+
+        return { ...carpoolRequest, trip, requester: user };
+      }),
+    );
+  }
+
   async findCarPoolRequestsByTrip(trip_id: string) {
     const trip = await this.tripRepository.findOneBy({
       _id: convertToObjectId(trip_id),
@@ -46,12 +67,14 @@ export class UserCarPoolRequestUseCaseService {
 
     return await Promise.all(
       carpoolRequests.map(async (carpoolRequest) => {
+        const trip = await this.tripRepository.findOneBy({
+          _id: carpoolRequest.trip,
+        });
         const requester = await this.userRepository.findOne({
           where: { _id: carpoolRequest.requester },
-          select: ['username', 'email', 'phone_number'],
+          select: ['username', 'email', 'phone_number', 'profile_picture'],
         });
-
-        return { ...carpoolRequest, requester };
+        return { ...carpoolRequest, trip, requester };
       }),
     );
   }
@@ -83,15 +106,9 @@ export class UserCarPoolRequestUseCaseService {
     return updatedCarPoolRequest;
   }
 
-  async markCarPoolAsComplete(trip_id: string) {
-    const trip = await this.tripRepository.findOneBy({
-      _id: convertToObjectId(trip_id),
-    });
-
-    if (!trip) throw new AppNotFoundException('trip does not exist');
-
+  async markCarPoolAsComplete(carpool_request_id: string) {
     const carpoolRequest = await this.carPoolRequestRepository.findOne({
-      where: { trip: trip._id },
+      where: { _id: carpool_request_id },
     });
 
     if (!carpoolRequest)
@@ -124,7 +141,11 @@ export class UserCarPoolRequestUseCaseService {
         'No carpool request has been made by this user',
       );
 
-    return carpoolRequest;
+    const trip = await this.tripRepository.findOneBy({
+      _id: carpoolRequest.trip,
+    });
+
+    return { ...carpoolRequest, requester, trip };
   }
 
   async createCarPoolRequest(
@@ -177,5 +198,18 @@ export class UserCarPoolRequestUseCaseService {
       updatedCarPoolRequest,
     );
     return updatedCarPoolRequest;
+  }
+
+  async cancelCarPoolRequest(carpool_request_id: string) {
+    const carpoolRequest = await this.carPoolRequestRepository.findOneBy({
+      _id: convertToObjectId(carpool_request_id),
+    });
+
+    if (!carpoolRequest)
+      throw new AppNotFoundException(
+        'No carpool request has been made by this user',
+      );
+
+    await this.carPoolRequestRepository.delete({ _id: carpoolRequest._id });
   }
 }

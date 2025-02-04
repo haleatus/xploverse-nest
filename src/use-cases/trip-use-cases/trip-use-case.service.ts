@@ -51,6 +51,20 @@ export class TripUseCaseService {
     return maximumTripCapacity - carPoolRequestParticipantCount;
   }
 
+  async getAllTripParticipantsByCarpoolRequests(
+    carpoolRequests: CarPoolRequestEntity[],
+  ) {
+    return await Promise.all(
+      carpoolRequests.map(async (carpoolRequest) => {
+        const user = await this.userRepository.findOne({
+          where: { _id: carpoolRequest.requester },
+          select: ['username', 'email', 'phone_number'],
+        });
+        return user;
+      }),
+    );
+  }
+
   async estimateTotalPerParticipantCost(
     totalTripCost: number,
     carpoolRequests: CarPoolRequestEntity[],
@@ -151,12 +165,16 @@ export class TripUseCaseService {
 
     const averageRatings = await this.calculateAverateRatings(tripRatings);
 
+    const tripParticipants =
+      await this.getAllTripParticipantsByCarpoolRequests(carPoolRequests);
+
     return {
       ...trip,
       planner,
       estimated_cost_per_person: estimatedCostPerPerson,
       available_seats: availableSeats,
       average_ratings: averageRatings,
+      trip_participants: tripParticipants,
     };
   }
 }

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -22,6 +23,15 @@ export class UserCarPoolRequestController {
     private userCarPoolRequestUseCaseService: UserCarPoolRequestUseCaseService,
   ) {}
 
+  @Get('/:id/get-all')
+  async getAllCarpoolRequestsByUser(@Param('id') user_id: string) {
+    return CoreApiResponse.success(
+      await this.userCarPoolRequestUseCaseService.findAllCarpoolRequestsByUser(
+        user_id,
+      ),
+    );
+  }
+
   @Get('/get/trip/:id')
   async getByTrip(@Param('id') trip_id: string) {
     return CoreApiResponse.success(
@@ -31,7 +41,7 @@ export class UserCarPoolRequestController {
     );
   }
 
-  @Get('/me')
+  @Get('/current/me')
   async getMyCarPoolRequest(@Req() req: any) {
     return CoreApiResponse.success(
       await this.userCarPoolRequestUseCaseService.getCarPoolRequestByRequester(
@@ -54,8 +64,7 @@ export class UserCarPoolRequestController {
     );
   }
 
-  @UseGuards(UserOperatorGuard)
-  @Patch('/trip/mark-as-complete/:id')
+  @Patch('/mark-as-complete/:id')
   async mark(@Param('id') trip_id: string) {
     return CoreApiResponse.success(
       await this.userCarPoolRequestUseCaseService.markCarPoolAsComplete(
@@ -83,6 +92,15 @@ export class UserCarPoolRequestController {
       await this.userCarPoolRequestUseCaseService.updateCarPoolRequest(
         carpool_request_id,
         dto,
+      ),
+    );
+  }
+
+  @Delete('/delete/:id')
+  async deleteCarpoolRequest(@Param('id') carpool_request_id: string) {
+    return CoreApiResponse.success(
+      await this.userCarPoolRequestUseCaseService.cancelCarPoolRequest(
+        carpool_request_id,
       ),
     );
   }

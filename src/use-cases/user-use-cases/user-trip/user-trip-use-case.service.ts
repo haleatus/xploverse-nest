@@ -10,6 +10,8 @@ import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-re
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
+import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
+import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
 
 @Injectable()
 export class UserTripUseCaseService {
@@ -25,6 +27,8 @@ export class UserTripUseCaseService {
   ) {}
 
   // TODO :: trip status should be seen, if trip status is ongoing then only trip rating is available
+
+  // TODO :: automatically remove all the carpool requests when the trip is completed
 
   async calculateAverateRatings(tripRatings: TripRatingEntity[]) {
     let count = 0;
@@ -117,7 +121,24 @@ export class UserTripUseCaseService {
     if (!trip) {
       throw new AppNotFoundException('Trip does not exist');
     }
+
     const updatedTrip = { ...trip, ...dto };
+
+    if (dto?.trip_status === TripStatusEnum.COMPLETED) {
+      updatedTrip.is_car_pool = false;
+      const carPoolRequests = await this.carPoolRequestRepository.find({
+        where: { trip: trip._id },
+      });
+      await Promise.all(
+        carPoolRequests.map(async (carPoolRequest) => {
+          await this.carPoolRequestRepository.update(
+            { _id: carPoolRequest._id },
+            { carpool_progress_status: CarPoolProgressStatusEnum.COMPLETED },
+          );
+        }),
+      );
+    }
+
     await this.tripRepository.update({ _id: trip._id }, updatedTrip);
     return updatedTrip;
   }
