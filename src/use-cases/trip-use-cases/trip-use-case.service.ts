@@ -174,7 +174,7 @@ export class TripUseCaseService {
       estimated_cost_per_person: estimatedCostPerPerson,
       available_seats: availableSeats,
       average_ratings: averageRatings,
-      trip_participants: tripParticipants,
+      trip_participants: tripParticipants ? tripParticipants : [],
     };
   }
 }
