@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -73,6 +74,15 @@ export class UserCarPoolRequestController {
       await this.userCarPoolRequestUseCaseService.updateCarPoolRequest(
         carpool_request_id,
         dto,
+      ),
+    );
+  }
+
+  @Delete('/delete/:id')
+  async deleteCarpoolRequest(@Param('id') carpool_request_id: string) {
+    return CoreApiResponse.success(
+      await this.userCarPoolRequestUseCaseService.cancelCarPoolRequest(
+        carpool_request_id,
       ),
     );
   }

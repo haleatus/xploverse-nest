@@ -147,4 +147,17 @@ export class UserCarPoolRequestUseCaseService {
     );
     return updatedCarPoolRequest;
   }
+
+  async cancelCarPoolRequest(carpool_request_id: string) {
+    const carpoolRequest = await this.carPoolRequestRepository.findOneBy({
+      _id: convertToObjectId(carpool_request_id),
+    });
+
+    if (!carpoolRequest)
+      throw new AppNotFoundException(
+        'No carpool request has been made by this user',
+      );
+
+    await this.carPoolRequestRepository.delete({ _id: carpoolRequest._id });
+  }
 }
