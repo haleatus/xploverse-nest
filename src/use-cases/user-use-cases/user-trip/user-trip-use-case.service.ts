@@ -11,7 +11,6 @@ import AppNotFoundException from 'src/application/exception/app-not-found.except
 import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
 import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
-import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
 import { FileEntity } from 'src/data-services/mgdb/entities/file.entity';
 
 @Injectable()

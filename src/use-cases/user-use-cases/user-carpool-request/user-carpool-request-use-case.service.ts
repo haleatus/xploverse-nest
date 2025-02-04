@@ -125,7 +125,7 @@ export class UserCarPoolRequestUseCaseService {
 
   async markCarPoolAsComplete(carpool_request_id: string) {
     const carpoolRequest = await this.carPoolRequestRepository.findOne({
-      where: { _id: carpool_request_id },
+      where: { _id: convertToObjectId(carpool_request_id) },
     });
 
     if (!carpoolRequest)
