@@ -59,6 +59,10 @@ export class UserTripUseCaseService {
           _id: userTrip.planner,
         });
 
+        const tripImage = await this.fileRepository.findOneBy({
+          _id: userTrip.trip_image,
+        });
+
         const profilePicture = await this.fileRepository.findOneBy({
           _id: planner.profile_picture,
         });
@@ -71,7 +75,12 @@ export class UserTripUseCaseService {
 
         const averageRatings = await this.calculateAverateRatings(tripRatings);
 
-        return { ...userTrip, planner: plannerData, averageRatings };
+        return {
+          ...userTrip,
+          trip_image: tripImage,
+          planner: plannerData,
+          averageRatings,
+        };
       }),
     );
   }
@@ -93,17 +102,22 @@ export class UserTripUseCaseService {
 
     return await Promise.all(
       trips.map(async (trip) => {
-        const planner = await this.userRepository.findOneBy({
-          _id: trip.planner,
-        });
-
         const tripRatings = await this.tripRatingRepository.find({
           where: { trip: trip._id },
         });
 
+        const tripImage = await this.fileRepository.findOneBy({
+          _id: trip.trip_image,
+        });
+
         const averageRatings = await this.calculateAverateRatings(tripRatings);
 
-        return { ...trip, planner: plannerData, averageRatings };
+        return {
+          ...trip,
+          trip_image: tripImage,
+          planner: plannerData,
+          averageRatings,
+        };
       }),
     );
   }
