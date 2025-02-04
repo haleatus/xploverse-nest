@@ -106,9 +106,13 @@ export class UserTripUseCaseService {
           where: { trip: trip._id },
         });
 
+        console.log(trip.trip_image);
+
         const tripImage = await this.fileRepository.findOneBy({
           _id: trip.trip_image,
         });
+
+        console.log(tripImage);
 
         const averageRatings = await this.calculateAverateRatings(tripRatings);
 
@@ -132,6 +136,7 @@ export class UserTripUseCaseService {
 
     const newTrip = this.tripRepository.create({
       ...dto,
+      trip_image: convertToObjectId(dto.trip_image),
       planner: planner._id,
       trip_status: TripStatusEnum.UPCOMING,
       is_car_pool: dto.is_car_pool ?? false,
@@ -147,7 +152,11 @@ export class UserTripUseCaseService {
       throw new AppNotFoundException('Trip does not exist');
     }
 
-    const updatedTrip = { ...trip, ...dto };
+    const updatedTrip = {
+      ...trip,
+      ...dto,
+      trip_image: convertToObjectId(dto.trip_image),
+    };
 
     if (dto?.trip_status === TripStatusEnum.COMPLETED) {
       updatedTrip.is_car_pool = false;
