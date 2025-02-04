@@ -32,7 +32,7 @@ export class UserCarPoolRequestController {
     );
   }
 
-  @Get('/me')
+  @Get('/current/me')
   async getMyCarPoolRequest(@Req() req: any) {
     return CoreApiResponse.success(
       await this.userCarPoolRequestUseCaseService.getCarPoolRequestByRequester(
@@ -51,6 +51,15 @@ export class UserCarPoolRequestController {
       await this.userCarPoolRequestUseCaseService.carPoolRequestAction(
         carpool_request_id,
         dto,
+      ),
+    );
+  }
+
+  @Patch('/mark-as-complete/:id')
+  async mark(@Param('id') trip_id: string) {
+    return CoreApiResponse.success(
+      await this.userCarPoolRequestUseCaseService.markCarPoolAsComplete(
+        trip_id,
       ),
     );
   }

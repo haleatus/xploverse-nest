@@ -10,6 +10,8 @@ import { CarPoolRequestEntity } from 'src/data-services/mgdb/entities/carpool-re
 import AppNotFoundException from 'src/application/exception/app-not-found.exception';
 import { TripStatusEnum } from 'src/common/enums/trip-status.enum';
 import { TripRatingEntity } from 'src/data-services/mgdb/entities/trip-rating.entity';
+import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
+import { CarPoolRequestStatusEnum } from 'src/common/enums/carpool-request-status.enum';
 
 @Injectable()
 export class UserTripUseCaseService {
@@ -129,9 +131,10 @@ export class UserTripUseCaseService {
       });
       await Promise.all(
         carPoolRequests.map(async (carPoolRequest) => {
-          await this.carPoolRequestRepository.delete({
-            _id: carPoolRequest._id,
-          });
+          await this.carPoolRequestRepository.update(
+            { _id: carPoolRequest._id },
+            { carpool_progress_status: CarPoolProgressStatusEnum.COMPLETED },
+          );
         }),
       );
     }
