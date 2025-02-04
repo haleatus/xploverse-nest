@@ -18,6 +18,8 @@ import { MongoRepository } from 'typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
 
+// TODO :: cancel carpool request by user
+
 @Injectable()
 export class UserCarPoolRequestUseCaseService {
   constructor(
@@ -71,42 +73,10 @@ export class UserCarPoolRequestUseCaseService {
       carpool_request_status: dto.carpool_request_status,
     };
 
-    (updatedCarPoolRequest.carpool_progress_status = dto.carpool_request_status
-      ? dto.carpool_request_status === CarPoolRequestStatusEnum.ACCEPTED
-        ? CarPoolProgressStatusEnum.IN_PROGRESS
-        : CarPoolProgressStatusEnum.NOT_STARTED
-      : CarPoolProgressStatusEnum.NOT_STARTED),
-      await this.carPoolRequestRepository.update(
-        { _id: carpoolRequest._id },
-        updatedCarPoolRequest,
-      );
-    return updatedCarPoolRequest;
-  }
-
-  async markCarPoolAsComplete(trip_id: string) {
-    const trip = await this.tripRepository.findOneBy({
-      _id: convertToObjectId(trip_id),
-    });
-
-    if (!trip) throw new AppNotFoundException('trip does not exist');
-
-    const carpoolRequest = await this.carPoolRequestRepository.findOne({
-      where: { trip: trip._id },
-    });
-
-    if (!carpoolRequest)
-      throw new AppNotFoundException('Carpool request does not exist');
-
-    const updatedCarPoolRequest = {
-      ...carpoolRequest,
-      carpool_progress_status: CarPoolProgressStatusEnum.COMPLETED,
-    };
-
     await this.carPoolRequestRepository.update(
       { _id: carpoolRequest._id },
       updatedCarPoolRequest,
     );
-
     return updatedCarPoolRequest;
   }
 
@@ -155,7 +125,6 @@ export class UserCarPoolRequestUseCaseService {
       carpool_request_status: dto.carpool_request_status
         ? dto.carpool_request_status
         : CarPoolRequestStatusEnum.PENDING,
-      carpool_progress_status: CarPoolProgressStatusEnum.NOT_STARTED,
     });
 
     return await this.carPoolRequestRepository.save(newCarPoolRequest);

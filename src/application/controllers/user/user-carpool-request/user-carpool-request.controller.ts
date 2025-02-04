@@ -54,16 +54,6 @@ export class UserCarPoolRequestController {
     );
   }
 
-  @UseGuards(UserOperatorGuard)
-  @Patch('/trip/mark-as-complete/:id')
-  async mark(@Param('id') trip_id: string) {
-    return CoreApiResponse.success(
-      await this.userCarPoolRequestUseCaseService.markCarPoolAsComplete(
-        trip_id,
-      ),
-    );
-  }
-
   @Post('/create')
   async create(@Req() req: any, @Body() dto: CreateCarPoolRequestDto) {
     return CoreApiResponse.success(

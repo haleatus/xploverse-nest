@@ -10,9 +10,6 @@ export class CarPoolRequestEntity extends BaseEntity {
   carpool_request_status: CarPoolRequestStatusEnum;
 
   @Column()
-  carpool_progress_status: CarPoolProgressStatusEnum;
-
-  @Column()
   participants_count: number;
 
   @Column()

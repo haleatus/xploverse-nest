@@ -26,6 +26,8 @@ export class UserTripUseCaseService {
 
   // TODO :: trip status should be seen, if trip status is ongoing then only trip rating is available
 
+  // TODO :: automatically remove all the carpool requests when the trip is completed
+
   async calculateAverateRatings(tripRatings: TripRatingEntity[]) {
     let count = 0;
     tripRatings.map((tripRating) => {
