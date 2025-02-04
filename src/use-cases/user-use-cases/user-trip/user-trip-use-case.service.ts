@@ -119,7 +119,23 @@ export class UserTripUseCaseService {
     if (!trip) {
       throw new AppNotFoundException('Trip does not exist');
     }
+
     const updatedTrip = { ...trip, ...dto };
+
+    if (dto?.trip_status === TripStatusEnum.COMPLETED) {
+      updatedTrip.is_car_pool = false;
+      const carPoolRequests = await this.carPoolRequestRepository.find({
+        where: { trip: trip._id },
+      });
+      await Promise.all(
+        carPoolRequests.map(async (carPoolRequest) => {
+          await this.carPoolRequestRepository.delete({
+            _id: carPoolRequest._id,
+          });
+        }),
+      );
+    }
+
     await this.tripRepository.update({ _id: trip._id }, updatedTrip);
     return updatedTrip;
   }

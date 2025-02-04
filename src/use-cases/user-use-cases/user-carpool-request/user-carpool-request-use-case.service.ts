@@ -18,8 +18,6 @@ import { MongoRepository } from 'typeorm';
 import { UserEntity } from 'src/data-services/mgdb/entities/user.entity';
 import { CarPoolProgressStatusEnum } from 'src/common/enums/carpool-progess-status.enum';
 
-// TODO :: cancel carpool request by user
-
 @Injectable()
 export class UserCarPoolRequestUseCaseService {
   constructor(
