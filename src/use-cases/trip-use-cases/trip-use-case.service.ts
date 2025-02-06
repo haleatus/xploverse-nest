@@ -203,3 +203,73 @@ export class TripUseCaseService {
     };
   }
 }
+
+// TODO :: Refactor the findTripById method to use Promise.all for parallel processing of data
+
+// async findTripById(id: string) {
+//   const trip_id = convertToObjectId(id);
+
+//   // Parallel fetch of trip and its ratings
+//   const [trip, tripRatings] = await Promise.all([
+//       this.tripRepository.findOneBy({ _id: trip_id }),
+//       this.tripRatingRepository.find({
+//           where: { trip: trip_id },
+//       })
+//   ]);
+
+//   if (!trip) {
+//       throw new AppNotFoundException('Trip does not exist');
+//   }
+
+//   // Parallel fetch of user, trip image, and carpool requests
+//   const [planner, tripImage, carPoolRequests] = await Promise.all([
+//       this.userRepository.findOne({
+//           where: { _id: trip.planner },
+//           select: ['username', 'email', 'phone_number', 'profile_picture'],
+//       }),
+//       this.fileRepository.findOneBy({
+//           _id: trip.trip_image,
+//       }),
+//       this.carpoolRequestRepository.find({
+//           where: {
+//               trip: trip._id,
+//               carpool_request_status: CarPoolRequestStatusEnum.ACCEPTED,
+//           },
+//       })
+//   ]);
+
+//   // Parallel processing of derived data
+//   const [
+//       profilePicture,
+//       availableSeats,
+//       estimatedCostPerPerson,
+//       averageRatings,
+//       tripParticipants
+//   ] = await Promise.all([
+//       this.fileRepository.findOneBy({
+//           _id: planner.profile_picture,
+//       }),
+//       this.calculateAvailableSeats(
+//           trip.max_participants,
+//           carPoolRequests,
+//       ),
+//       this.estimateTotalPerParticipantCost(
+//           trip.total_trip_cost,
+//           carPoolRequests,
+//       ),
+//       this.calculateAverateRatings(tripRatings),
+//       this.getAllTripParticipantsByCarpoolRequests(carPoolRequests)
+//   ]);
+
+//   const plannerData = { ...planner, profile_picture: profilePicture };
+
+//   return {
+//       ...trip,
+//       trip_image: tripImage,
+//       planner: plannerData,
+//       estimated_cost_per_person: estimatedCostPerPerson,
+//       available_seats: availableSeats,
+//       average_ratings: averageRatings,
+//       trip_participants: tripParticipants ? tripParticipants : [],
+//   };
+// }
