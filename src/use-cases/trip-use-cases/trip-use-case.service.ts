@@ -61,9 +61,14 @@ export class TripUseCaseService {
       carpoolRequests.map(async (carpoolRequest) => {
         const user = await this.userRepository.findOne({
           where: { _id: carpoolRequest.requester },
-          select: ['username', 'email', 'phone_number'],
+          select: ['username', 'email', 'phone_number', 'profile_picture'],
         });
-        return user;
+
+        const profilePicture = await this.fileRepository.findOneBy({
+          _id: user.profile_picture,
+        });
+
+        return { ...user, profile_picture: profilePicture };
       }),
     );
   }
