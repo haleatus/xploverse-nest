@@ -78,3 +78,53 @@ export class BaseUserEntity extends BaseEntity {
     };
   }
 }
+
+// TODO
+// export class BaseEntity extends TypeOrmBaseEntity {
+//   @ObjectIdColumn()
+//   _id: ObjectId;
+
+//   @Column()
+//   public createdAt: Date;
+
+//   @Column()
+//   public updatedAt: Date;
+
+//   @Column({ nullable: true, select: false })
+//   public deletedAt?: Date;
+
+//   @BeforeInsert()
+//   setCreatedAt() {
+//     this.createdAt = new Date();
+//     this.updatedAt = new Date();
+//   }
+
+//   @BeforeUpdate()
+//   setUpdatedAt() {
+//     this.updatedAt = new Date();
+//   }
+
+//   /**
+//    * Excludes specified fields from the response object.
+//    * @param exclude - Array of field names to exclude.
+//    */
+//   toResponse(exclude: string[] = ['updatedAt', 'deletedAt']) {
+//     const response = { ...this }; // Create a shallow copy
+//     exclude.forEach((field) => delete response[field]);
+//     return response;
+//   }
+
+//   /**
+//    * Generates a standardized repository name for the entity.
+//    */
+//   static get REPOSITORY(): string {
+//     const name = this.name
+//       .replace(/([A-Z])/g, ' $1')
+//       .replace(/entity/gi, '')
+//       .trim()
+//       .split(' ')
+//       .join('_')
+//       .toUpperCase();
+//     return `${name}_REPOSITORY`;
+//   }
+// }
