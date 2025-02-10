@@ -150,17 +150,8 @@ export class UserCarPoolRequestUseCaseService {
   }
 
   async getCarPoolRequestByRequester(requester_id: ObjectId) {
-    const requester = await this.userRepository.findOne({
-      where: {
-        $or: [
-          { _id: requester_id },
-          {
-            carpool_progress_status:
-              CarPoolProgressStatusEnum.IN_PROGRESS ||
-              CarPoolProgressStatusEnum.IN_PROGRESS,
-          },
-        ],
-      },
+    const requester = await this.userRepository.findOneBy({
+      _id: requester_id,
     });
 
     const profilePicture = await this.fileRepository.findOneBy({
@@ -170,7 +161,15 @@ export class UserCarPoolRequestUseCaseService {
     const requesterData = { ...requester, profile_picture: profilePicture };
 
     const carpoolRequest = await this.carPoolRequestRepository.findOne({
-      where: { requester: requester._id },
+      where: {
+        requester: requester._id,
+        carpool_progess_status: {
+          $in: [
+            CarPoolProgressStatusEnum.NOT_STARTED,
+            CarPoolProgressStatusEnum.IN_PROGRESS,
+          ],
+        },
+      },
     });
 
     if (!carpoolRequest)
