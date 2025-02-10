@@ -10,6 +10,7 @@ import { ControllerModule } from './application/controllers/controller.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './application/guards/auth.guard';
 import routes from './application/controllers/routes';
+import { ChatGatewayModule } from './application/gateways/chat/chat.gateway';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import routes from './application/controllers/routes';
     CryptoModule,
     TokenModule,
     ControllerModule,
+    ChatGatewayModule,
   ],
   controllers: [AppController],
   providers: [
