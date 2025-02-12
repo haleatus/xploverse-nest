@@ -161,7 +161,15 @@ export class UserCarPoolRequestUseCaseService {
     const requesterData = { ...requester, profile_picture: profilePicture };
 
     const carpoolRequest = await this.carPoolRequestRepository.findOne({
-      where: { requester: requester._id },
+      where: {
+        requester: requester._id,
+        carpool_progess_status: {
+          $in: [
+            CarPoolProgressStatusEnum.NOT_STARTED,
+            CarPoolProgressStatusEnum.IN_PROGRESS,
+          ],
+        },
+      },
     });
 
     if (!carpoolRequest)
